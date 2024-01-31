@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using LethalEventsLib.Events;
+using LethalModDataLib.Enums;
 using LethalModDataLib.Features;
 
 namespace LethalModDataLib;
@@ -9,6 +10,7 @@ namespace LethalModDataLib;
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class LethalModDataLib : BaseUnityPlugin
 {
+    private const string ModVersionKey = "LMDLVersion";
     internal new static ManualLogSource? Logger { get; private set; }
     public static LethalModDataLib? Instance { get; private set; }
 
@@ -27,12 +29,47 @@ public class LethalModDataLib : BaseUnityPlugin
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
     }
 
+    private static void VersionCheck()
+    {
+        // Load LethalModDataLib version from general mod data
+        var version = ModDataHandler.LoadData<string>(ModVersionKey, saveLocation: SaveLocation.GeneralSave);
+
+        // Check if version is null
+        if (string.IsNullOrEmpty(version))
+        {
+            Logger?.LogInfo(
+                "No saved LethalModDataLib version found. " +
+                "This is normal if this is the first time you are running the game with LethalModDataLib installed.");
+        }
+        else
+        {
+            // Check if version is equal to current version
+            if (version == PluginInfo.PLUGIN_VERSION)
+                Logger?.LogDebug($"LethalModDataLib version ({PluginInfo.PLUGIN_VERSION}) matches last saved version ({version}).");
+            else
+            {
+                ModDataHandler.SaveData(ModVersionKey + "_old", version, SaveLocation.GeneralSave);
+                Logger?.LogWarning(
+                    $"Mismatch between last saved LethalModDataLib version ({version})" +
+                    $"and current version ({PluginInfo.PLUGIN_VERSION})." +
+                    $"This is normal if you have updated LethalModDataLib." +
+                    $"Make sure to check the changelog for breaking changes.");   
+            }
+        }
+
+        // Save LethalModDataLib version to general mod data
+        ModDataHandler.SaveData<string>(PluginInfo.PLUGIN_VERSION, ModVersionKey, SaveLocation.GeneralSave);
+    }
+
     private static void OnGameInitialized()
     {
         // Initialise ModDataHandler after all other plugins have loaded
         ModDataHandler.Initialise();
-        
+
         // Unhook initialisation event
         SystemEvents.PostInitializeGameEvent -= OnGameInitialized;
+
+        // Check version
+        VersionCheck();
     }
 }
