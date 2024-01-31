@@ -11,6 +11,10 @@ namespace LethalModDataLib.Base;
 /// </summary>
 public abstract class ModDataContainer
 {
+    /// <summary>
+    ///     Gets the save location for the container.
+    /// </summary>
+    /// <remarks> Edit this to change the save location. </remarks>
     private SaveLocation SaveLocation { get; } = SaveLocation.CurrentSave;
 
     /// <summary>
