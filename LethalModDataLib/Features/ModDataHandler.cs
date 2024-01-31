@@ -15,25 +15,6 @@ public static class ModDataHandler
     private static readonly Dictionary<Assembly, string> PluginGuids = new();
 
     /// <summary>
-    ///     Gets the current save file name.
-    /// </summary>
-    /// <returns> The current save file name. </returns>
-    /// <remarks> When used too early, this will return the last save file used by the player. </remarks>
-    public static string GetCurrentSaveFileName()
-    {
-        return GameNetworkManager.Instance.currentSaveFileName;
-    }
-
-    /// <summary>
-    ///     Gets the general save file name.
-    /// </summary>
-    /// <returns> The general save file name. </returns>
-    public static string GetGeneralSaveFileName()
-    {
-        return GameNetworkManager.generalSaveDataName;
-    }
-
-    /// <summary>
     ///     Verifies that the key and file name are not null or empty.
     /// </summary>
     /// <param name="key"> Key to verify. </param>
@@ -69,7 +50,7 @@ public static class ModDataHandler
         PluginGuids.Add(assembly, callerPluginInfo?.Metadata.GUID ?? "Unknown");
         return PluginGuids[assembly];
     }
-    
+
     /// <summary>
     ///     Gets the moddata key for a field registered with the ModDataAttribute.
     /// </summary>
@@ -79,7 +60,7 @@ public static class ModDataHandler
     {
         return ModDataEntries[field].BaseKey + "." + field.Name;
     }
-    
+
     /// <summary>
     ///     Generates a base key for a field registered with the ModDataAttribute.
     /// </summary>
@@ -89,162 +70,6 @@ public static class ModDataHandler
     public static string GenerateFieldBaseKey(Type type, string guid)
     {
         return guid + "." + type.FullName;
-    }
-
-    /// <summary>
-    ///     Saves data to a moddata file.
-    /// </summary>
-    /// <param name="data"> Data to save. </param>
-    /// <param name="key"> Key to save the data under. </param>
-    /// <param name="fileName"> Name of the file to save the data to. </param>
-    /// <typeparam name="T"> Type of the data to save. </typeparam>
-    /// <returns> True if the data was saved successfully, false otherwise. </returns>
-    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool SaveData<T>(T? data, string key, string fileName)
-    {
-        VerifyKeyAndFileName(key, fileName);
-
-        fileName += ".moddata";
-
-        try
-        {
-            LethalModDataLib.Logger?.LogDebug($"Saving data to file {fileName} with key {key}...");
-            ES3.Save(key, data, fileName);
-            return true;
-        }
-        catch (Exception e)
-        {
-            LethalModDataLib.Logger?.LogError($"Failed to save data to file {fileName} with key {key}! Exception: {e}");
-            return false;
-        }
-    }
-
-    /// <summary>
-    ///     Saves data to the moddata file matching the SaveLocation enum.
-    /// </summary>
-    /// <param name="data"> Data to save. </param>
-    /// <param name="key"> Key to save the data under. </param>
-    /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
-    /// <typeparam name="T"> Type of the data to save. </typeparam>
-    /// <returns> True if the data was saved successfully, false otherwise. </returns>
-    /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
-    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool SaveData<T>(T? data, string key, SaveLocation saveLocation = SaveLocation.CurrentSave)
-    {
-        // TODO: Disabled this for now. It *works*, but also causes all keys of attribute-based data to end up with LethalModDataLib at the start.
-        // var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
-        //
-        // if (!key.StartsWith(guid))
-        //     key = guid + "." + key;
-
-        return SaveData(data, key, saveLocation switch
-        {
-            SaveLocation.CurrentSave => GetCurrentSaveFileName(),
-            SaveLocation.GeneralSave => GetGeneralSaveFileName(),
-            _ => throw new ArgumentOutOfRangeException(nameof(saveLocation), saveLocation, "Invalid save location!")
-        });
-    }
-
-    /// <summary>
-    ///     Saves data based on the ModDataAttribute attached to the field.
-    /// </summary>
-    /// <param name="field"> Field to save. </param>
-    /// <returns> True if the data was saved successfully, false otherwise. </returns>
-    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool SaveData(FieldInfo field)
-    {
-        if (ModDataEntries[field].BaseKey == null)
-        {
-            LethalModDataLib.Logger?.LogWarning(
-                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
-            return false;
-        }
-
-        var key = GetFieldKey(field);
-        var saveLocation = ModDataEntries[field].SaveLocation;
-
-        var value = field.GetValue(null);
-
-        return SaveData(value, key, saveLocation);
-    }
-
-    /// <summary>
-    ///     Loads data from a moddata file.
-    /// </summary>
-    /// <param name="key"> Key to load the data from. </param>
-    /// <param name="fileName"> Name of the file to load the data from. </param>
-    /// <param name="defaultValue"> Default value to return if the data could not be loaded. </param>
-    /// <typeparam name="T"> Type of the data to load. </typeparam>
-    /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
-    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static T? LoadData<T>(string key, string fileName, T? defaultValue = default)
-    {
-        VerifyKeyAndFileName(key, fileName);
-
-        fileName += ".moddata";
-
-        try
-        {
-            LethalModDataLib.Logger?.LogDebug($"Loading data from file {fileName} with key {key}...");
-            return ES3.KeyExists(key, fileName) ? ES3.Load<T>(key, fileName) : defaultValue;
-        }
-        catch (Exception e)
-        {
-            LethalModDataLib.Logger?.LogError(
-                $"Failed to load data from file {fileName} with key {key}! Exception: {e}");
-            return defaultValue;
-        }
-    }
-
-    /// <summary>
-    ///     Loads data from the moddata file matching the SaveLocation enum.
-    /// </summary>
-    /// <param name="key"> Key to load the data from. </param>
-    /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
-    /// <param name="defaultValue"> Default value to return if the data could not be loaded. </param>
-    /// <typeparam name="T"> Type of the data to load. </typeparam>
-    /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
-    /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
-    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static T? LoadData<T>(string key, T? defaultValue = default,
-        SaveLocation saveLocation = SaveLocation.CurrentSave)
-    {
-        // TODO: Disabled this for now. It *works*, but also causes all keys of attribute-based data to end up with LethalModDataLib at the start.
-        // var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
-        //
-        // if (!key.StartsWith(guid))
-        //     key = guid + "." + key;
-
-        return LoadData(key, saveLocation switch
-        {
-            SaveLocation.CurrentSave => GetCurrentSaveFileName(),
-            SaveLocation.GeneralSave => GetGeneralSaveFileName(),
-            _ => throw new ArgumentOutOfRangeException(nameof(saveLocation), saveLocation, "Invalid load location!")
-        }, defaultValue);
-    }
-
-    /// <summary>
-    ///     Loads data based on the ModDataAttribute attached to the field.
-    /// </summary>
-    /// <param name="field"> Field to load. </param>
-    /// <returns> True if the data was loaded successfully, false otherwise. </returns>
-    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool LoadData(FieldInfo field)
-    {
-        if (ModDataEntries[field].BaseKey == null)
-        {
-            LethalModDataLib.Logger?.LogWarning(
-                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
-            return false;
-        }
-
-        var key = GetFieldKey(field);
-        var saveLocation = ModDataEntries[field].SaveLocation;
-
-        var value = LoadData<object>(key, saveLocation: saveLocation);
-
-        field.SetValue(null, value);
-        return true;
     }
 
     /// <summary>
@@ -264,6 +89,8 @@ public static class ModDataHandler
             LethalModDataLib.Logger?.LogError($"Failed to delete file {fileName}! Exception: {e}");
         }
     }
+
+    #region Initialisation
 
     /// <summary>
     ///     Registers all mod data fields that are declared in assemblies of BepInEx plugins.
@@ -297,6 +124,27 @@ public static class ModDataHandler
                     $"Added field {field.Name} from {guid}.{type.FullName} to the mod data system!");
             }
     }
+
+    /// <summary>
+    ///     Initialises the mod data system.
+    /// </summary>
+    public static void Initialise()
+    {
+        LethalModDataLib.Logger?.LogInfo("Registering ModDataAttribute fields...");
+        RegisterModDataAttributes();
+
+        LethalModDataLib.Logger?.LogInfo("Hooking up save, load and delete events...");
+        SystemEvents.PostSaveGameEvent += OnSave;
+        SystemEvents.PostAutoSaveShipDataEvent += OnAutoSave;
+        SystemEvents.PostLoadGameEvent += OnLoad;
+        SystemEvents.PostDeleteFileEvent += OnDeleteSave;
+
+        LethalModDataLib.Logger?.LogInfo("ModDataHandler initialised!");
+    }
+
+    #endregion
+
+    #region EventHandlers
 
     /// <summary>
     ///     Saves all mod data fields that have their SaveWhen set to OnSave.
@@ -350,20 +198,176 @@ public static class ModDataHandler
         DeleteModDataFile(saveFileName);
     }
 
+    #endregion
+
+    #region LoadData
+
     /// <summary>
-    ///     Initialises the mod data system.
+    ///     Loads data from a moddata file.
     /// </summary>
-    public static void Initialise()
+    /// <param name="key"> Key to load the data from. </param>
+    /// <param name="fileName"> Name of the file to load the data from. </param>
+    /// <param name="defaultValue"> Default value to return if the data could not be loaded. </param>
+    /// <typeparam name="T"> Type of the data to load. </typeparam>
+    /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static T? LoadData<T>(string key, string fileName, T? defaultValue = default)
     {
-        LethalModDataLib.Logger?.LogInfo("Registering ModDataAttribute fields...");
-        RegisterModDataAttributes();
+        VerifyKeyAndFileName(key, fileName);
 
-        LethalModDataLib.Logger?.LogInfo("Hooking up save, load and delete events...");
-        SystemEvents.PostSaveGameEvent += OnSave;
-        SystemEvents.PostAutoSaveShipDataEvent += OnAutoSave;
-        SystemEvents.PostLoadGameEvent += OnLoad;
-        SystemEvents.PostDeleteFileEvent += OnDeleteSave;
+        fileName += ".moddata";
 
-        LethalModDataLib.Logger?.LogInfo("ModDataHandler initialised!");
+        try
+        {
+            LethalModDataLib.Logger?.LogDebug($"Loading data from file {fileName} with key {key}...");
+            return ES3.KeyExists(key, fileName) ? ES3.Load<T>(key, fileName) : defaultValue;
+        }
+        catch (Exception e)
+        {
+            LethalModDataLib.Logger?.LogError(
+                $"Failed to load data from file {fileName} with key {key}! Exception: {e}");
+            return defaultValue;
+        }
     }
+
+    /// <summary>
+    ///     Loads data from the moddata file matching the SaveLocation enum.
+    /// </summary>
+    /// <param name="key"> Key to load the data from. </param>
+    /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
+    /// <param name="defaultValue"> Default value to return if the data could not be loaded. </param>
+    /// <typeparam name="T"> Type of the data to load. </typeparam>
+    /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
+    /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static T? LoadData<T>(string key, T? defaultValue = default,
+        SaveLocation saveLocation = SaveLocation.CurrentSave)
+    {
+        // TODO: Disabled this for now. It *works*, but also causes all keys of attribute-based data to end up with LethalModDataLib at the start.
+        // var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
+        //
+        // if (!key.StartsWith(guid))
+        //     key = guid + "." + key;
+
+        return LoadData(key, saveLocation switch
+        {
+            SaveLocation.CurrentSave => ModDataHelper.GetCurrentSaveFileName(),
+            SaveLocation.GeneralSave => ModDataHelper.GetGeneralSaveFileName(),
+            _ => throw new ArgumentOutOfRangeException(nameof(saveLocation), saveLocation, "Invalid load location!")
+        }, defaultValue);
+    }
+
+    /// <summary>
+    ///     Loads data based on the ModDataAttribute attached to the field.
+    /// </summary>
+    /// <param name="field"> Field to load. </param>
+    /// <returns> True if the data was loaded successfully, false otherwise. </returns>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static bool LoadData(FieldInfo field)
+    {
+        if (ModDataEntries[field].BaseKey == null)
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
+            return false;
+        }
+
+        var key = GetFieldKey(field);
+        var saveLocation = ModDataEntries[field].SaveLocation;
+
+        var value = LoadData<object>(key, saveLocation: saveLocation);
+
+        field.SetValue(null, value);
+        return true;
+    }
+
+    #endregion
+
+    #region SaveData
+
+    /// <summary>
+    ///     Saves data to a moddata file.
+    /// </summary>
+    /// <param name="data"> Data to save. </param>
+    /// <param name="key"> Key to save the data under. </param>
+    /// <param name="fileName"> Name of the file to save the data to. </param>
+    /// <typeparam name="T"> Type of the data to save. </typeparam>
+    /// <returns> True if the data was saved successfully, false otherwise. </returns>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static bool SaveData<T>(T? data, string key, string fileName)
+    {
+        VerifyKeyAndFileName(key, fileName);
+
+        fileName += ".moddata";
+
+        try
+        {
+            LethalModDataLib.Logger?.LogDebug($"Saving data to file {fileName} with key {key}...");
+            ES3.Save(key, data, fileName);
+            return true;
+        }
+        catch (Exception e)
+        {
+            LethalModDataLib.Logger?.LogError($"Failed to save data to file {fileName} with key {key}! Exception: {e}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Saves data to the moddata file matching the SaveLocation enum.
+    /// </summary>
+    /// <param name="data"> Data to save. </param>
+    /// <param name="key"> Key to save the data under. </param>
+    /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
+    /// <typeparam name="T"> Type of the data to save. </typeparam>
+    /// <returns> True if the data was saved successfully, false otherwise. </returns>
+    /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static bool SaveData<T>(T? data, string key, SaveLocation saveLocation = SaveLocation.CurrentSave)
+    {
+        // TODO: Disabled this for now. It *works*, but also causes all keys of attribute-based data to end up with LethalModDataLib at the start.
+        // var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
+        //
+        // if (!key.StartsWith(guid))
+        //     key = guid + "." + key;
+
+        return SaveData(data, key, saveLocation switch
+        {
+            SaveLocation.CurrentSave => ModDataHelper.GetCurrentSaveFileName(),
+            SaveLocation.GeneralSave => ModDataHelper.GetGeneralSaveFileName(),
+            _ => throw new ArgumentOutOfRangeException(nameof(saveLocation), saveLocation, "Invalid save location!")
+        });
+    }
+
+    /// <summary>
+    ///     Saves data based on the ModDataAttribute attached to the field.
+    /// </summary>
+    /// <param name="field"> Field to save. </param>
+    /// <returns> True if the data was saved successfully, false otherwise. </returns>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static bool SaveData(FieldInfo field)
+    {
+        if (!ModDataEntries.ContainsKey(field))
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} is not registered!");
+            return false;
+        }
+        
+        if (ModDataEntries[field].BaseKey == null)
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
+            return false;
+        }
+
+        var key = GetFieldKey(field);
+        var saveLocation = ModDataEntries[field].SaveLocation;
+
+        var value = field.GetValue(null);
+
+        return SaveData(value, key, saveLocation: saveLocation);
+    }
+
+    #endregion
 }
