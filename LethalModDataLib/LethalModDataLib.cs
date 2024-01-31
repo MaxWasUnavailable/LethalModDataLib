@@ -29,7 +29,10 @@ public class LethalModDataLib : BaseUnityPlugin
 
     private static void OnGameInitialized()
     {
-        // Initialise ModDataHandler
+        // Initialise ModDataHandler after all other plugins have loaded
         ModDataHandler.Initialise();
+        
+        // Unhook initialisation event
+        SystemEvents.PostInitializeGameEvent -= OnGameInitialized;
     }
 }
