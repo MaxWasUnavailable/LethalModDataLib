@@ -69,6 +69,27 @@ public static class ModDataHandler
         PluginGuids.Add(assembly, callerPluginInfo?.Metadata.GUID ?? "Unknown");
         return PluginGuids[assembly];
     }
+    
+    /// <summary>
+    ///     Gets the moddata key for a field registered with the ModDataAttribute.
+    /// </summary>
+    /// <param name="field"> Field to get the moddata key for. </param>
+    /// <returns> The moddata key for the field. </returns>
+    public static string GetFieldKey(FieldInfo field)
+    {
+        return ModDataEntries[field].BaseKey + "." + field.Name;
+    }
+    
+    /// <summary>
+    ///     Generates a base key for a field registered with the ModDataAttribute.
+    /// </summary>
+    /// <param name="type"> Type of the field (used to fetch the namespace & class of the field's parent). </param>
+    /// <param name="guid"> GUID of the plugin that registered the field. </param>
+    /// <returns> The generated base key for the field. </returns>
+    public static string GenerateFieldBaseKey(Type type, string guid)
+    {
+        return guid + "." + type.FullName;
+    }
 
     /// <summary>
     ///     Saves data to a moddata file.
@@ -139,7 +160,7 @@ public static class ModDataHandler
             return false;
         }
 
-        var key = ModDataEntries[field].BaseKey + "." + field.Name;
+        var key = GetFieldKey(field);
         var saveLocation = ModDataEntries[field].SaveLocation;
 
         var value = field.GetValue(null);
@@ -217,7 +238,7 @@ public static class ModDataHandler
             return false;
         }
 
-        var key = ModDataEntries[field].BaseKey + "." + field.Name;
+        var key = GetFieldKey(field);
         var saveLocation = ModDataEntries[field].SaveLocation;
 
         var value = LoadData<object>(key, saveLocation: saveLocation);
@@ -257,7 +278,7 @@ public static class ModDataHandler
     /// <summary>
     ///     Saves all mod data fields that are declared in BepInEx plugins.
     /// </summary>
-    private static void AddModDataFields(string? guid, Type type)
+    private static void AddModDataFields(string guid, Type type)
     {
         foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
                                              BindingFlags.Static))
@@ -271,9 +292,9 @@ public static class ModDataHandler
                 }
 
                 ModDataEntries.Add(field, field.GetCustomAttribute<ModDataAttribute>());
-                ModDataEntries[field].BaseKey ??= guid;
+                ModDataEntries[field].BaseKey ??= GenerateFieldBaseKey(type, guid);
                 LethalModDataLib.Logger?.LogDebug(
-                    $"Added field {field.Name} from {type.FullName} to the mod data system!");
+                    $"Added field {field.Name} from {guid}.{type.FullName} to the mod data system!");
             }
     }
 
