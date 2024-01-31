@@ -56,7 +56,7 @@ public abstract class ModDataContainer
         {
             var value = field.GetValue(this);
 
-            ModDataHandler.SaveData(value, prefix + field.Name, SaveLocation);
+            ModDataHandler.SaveData(value, prefix + field.Name, SaveLocation, autoAddGuid: false);
         }
 
         PostSave();
@@ -87,7 +87,7 @@ public abstract class ModDataContainer
 
         foreach (var field in GetFields())
         {
-            var value = ModDataHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation);
+            var value = ModDataHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation, autoAddGuid: false);
 
             field.SetValue(this, value);
         }

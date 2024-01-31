@@ -236,18 +236,21 @@ public static class ModDataHandler
     /// <param name="key"> Key to load the data from. </param>
     /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
     /// <param name="defaultValue"> Default value to return if the data could not be loaded. </param>
+    /// <param name="autoAddGuid"> Whether or not to automatically add the GUID of the plugin that called the method to the key. </param>
     /// <typeparam name="T"> Type of the data to load. </typeparam>
     /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
     /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static T? LoadData<T>(string key, T? defaultValue = default,
-        SaveLocation saveLocation = SaveLocation.CurrentSave)
+        SaveLocation saveLocation = SaveLocation.CurrentSave, bool autoAddGuid = true)
     {
-        // TODO: Disabled this for now. It *works*, but also causes all keys of attribute-based data to end up with LethalModDataLib at the start.
-        // var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
-        //
-        // if (!key.StartsWith(guid))
-        //     key = guid + "." + key;
+        if (autoAddGuid)
+        {
+            var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
+
+            if (!key.StartsWith(guid))
+                key = guid + "." + key;
+        }
 
         return LoadData(key, saveLocation switch
         {
@@ -275,7 +278,7 @@ public static class ModDataHandler
         var key = GetFieldKey(field);
         var saveLocation = ModDataEntries[field].SaveLocation;
 
-        var value = LoadData<object>(key, saveLocation: saveLocation);
+        var value = LoadData<object>(key, saveLocation: saveLocation, autoAddGuid: false);
 
         field.SetValue(null, value);
         return true;
@@ -319,17 +322,24 @@ public static class ModDataHandler
     /// <param name="data"> Data to save. </param>
     /// <param name="key"> Key to save the data under. </param>
     /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
+    /// <param name="autoAddGuid">
+    ///     Whether or not to automatically add the GUID of the plugin that called the method to the
+    ///     key.
+    /// </param>
     /// <typeparam name="T"> Type of the data to save. </typeparam>
     /// <returns> True if the data was saved successfully, false otherwise. </returns>
     /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool SaveData<T>(T? data, string key, SaveLocation saveLocation = SaveLocation.CurrentSave)
+    public static bool SaveData<T>(T? data, string key, SaveLocation saveLocation = SaveLocation.CurrentSave,
+        bool autoAddGuid = true)
     {
-        // TODO: Disabled this for now. It *works*, but also causes all keys of attribute-based data to end up with LethalModDataLib at the start.
-        // var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
-        //
-        // if (!key.StartsWith(guid))
-        //     key = guid + "." + key;
+        if (autoAddGuid)
+        {
+            var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
+
+            if (!key.StartsWith(guid))
+                key = guid + "." + key;
+        }
 
         return SaveData(data, key, saveLocation switch
         {
@@ -353,7 +363,7 @@ public static class ModDataHandler
                 $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} is not registered!");
             return false;
         }
-        
+
         if (ModDataEntries[field].BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
@@ -366,7 +376,7 @@ public static class ModDataHandler
 
         var value = field.GetValue(null);
 
-        return SaveData(value, key, saveLocation: saveLocation);
+        return SaveData(value, key, saveLocation, false);
     }
 
     #endregion
