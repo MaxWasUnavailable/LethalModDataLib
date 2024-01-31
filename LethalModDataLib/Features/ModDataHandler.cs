@@ -57,17 +57,15 @@ public static class ModDataHandler
     {
         if (PluginGuids.TryGetValue(assembly, out var guid))
             return guid;
-        
+
         var callerAssembly = Assembly.GetCallingAssembly();
         var callerPluginInfo = Chainloader.PluginInfos.Values.FirstOrDefault(pluginInfo =>
             pluginInfo.Instance?.GetType().Assembly == callerAssembly);
 
         if (callerPluginInfo == null)
-        {
             LethalModDataLib.Logger?.LogWarning(
                 $"Failed to get plugin info for assembly {callerAssembly.FullName}!");
-        }
-        
+
         PluginGuids.Add(assembly, callerPluginInfo?.Metadata.GUID ?? "Unknown");
         return PluginGuids[assembly];
     }
@@ -117,7 +115,7 @@ public static class ModDataHandler
         //
         // if (!key.StartsWith(guid))
         //     key = guid + "." + key;
-        
+
         return SaveData(data, key, saveLocation switch
         {
             SaveLocation.CurrentSave => GetCurrentSaveFileName(),
@@ -143,7 +141,7 @@ public static class ModDataHandler
 
         var key = ModDataEntries[field].BaseKey + "." + field.Name;
         var saveLocation = ModDataEntries[field].SaveLocation;
-        
+
         var value = field.GetValue(null);
 
         return SaveData(value, key, saveLocation);
@@ -187,14 +185,15 @@ public static class ModDataHandler
     /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
     /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static T? LoadData<T>(string key, T? defaultValue = default, SaveLocation saveLocation = SaveLocation.CurrentSave)
+    public static T? LoadData<T>(string key, T? defaultValue = default,
+        SaveLocation saveLocation = SaveLocation.CurrentSave)
     {
         // TODO: Disabled this for now. It *works*, but also causes all keys of attribute-based data to end up with LethalModDataLib at the start.
         // var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
         //
         // if (!key.StartsWith(guid))
         //     key = guid + "." + key;
-        
+
         return LoadData(key, saveLocation switch
         {
             SaveLocation.CurrentSave => GetCurrentSaveFileName(),
