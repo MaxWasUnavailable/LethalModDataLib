@@ -10,7 +10,8 @@ public static class ModDataHelper
     /// <param name="obj"> Object to get the field info from. </param>
     /// <param name="fieldName"> Name of the field to get the field info for. </param>
     /// <returns> The field info for the field. </returns>
-    public static FieldInfo? GetFieldInfo(this object obj, string fieldName)
+    /// <remarks> It is recommended to use nameof() to get the field name. </remarks>
+    public static FieldInfo? GetFieldInfo(object obj, string fieldName)
     {
         return obj.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
                                                  BindingFlags.Static);
