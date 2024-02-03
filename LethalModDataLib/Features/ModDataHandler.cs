@@ -47,7 +47,7 @@ public static class ModDataHandler
             LethalModDataLib.Logger?.LogWarning(
                 $"Failed to get plugin info for assembly {callerAssembly.FullName}!");
 
-        PluginGuids.Add(assembly, callerPluginInfo?.Metadata.GUID ?? "Unknown");
+        PluginGuids.Add(assembly, callerPluginInfo?.Metadata?.GUID ?? "Unknown");
         return PluginGuids[assembly];
     }
 
