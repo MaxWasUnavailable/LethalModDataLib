@@ -15,7 +15,12 @@ public abstract class ModDataContainer
     ///     Gets the save location for the container.
     /// </summary>
     /// <remarks> Edit this to change the save location. </remarks>
-    private SaveLocation SaveLocation { get; } = SaveLocation.CurrentSave;
+    internal SaveLocation SaveLocation { get; } = SaveLocation.CurrentSave;
+    
+    /// <summary>
+    ///     Gets an optional prefix suffix to add to the GetPrefix() method.
+    /// </summary>
+    internal string OptionalPrefixSuffix { get; } = string.Empty;
 
     /// <summary>
     ///     Gets all fields in the container.
@@ -36,11 +41,16 @@ public abstract class ModDataContainer
     ///     Gets the prefix for moddata keys of fields in the container.
     /// </summary>
     /// <returns> The prefix for moddata keys of fields in the container. </returns>
-    private string GetPrefix()
+    internal string GetPrefix()
     {
         var type = GetType();
+        var prefixSuffix = string.Empty;
 
-        return type.Assembly.GetName().Name + "." + type.Name + ".";
+        // if there is an optional prefix we add it to the prefix + "."
+        if (!string.IsNullOrEmpty(OptionalPrefixSuffix))
+            prefixSuffix = OptionalPrefixSuffix + ".";
+
+        return type.Assembly.GetName().Name + "." + type.Name + "." + prefixSuffix;
     }
 
     /// <summary>
