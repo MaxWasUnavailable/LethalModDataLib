@@ -39,13 +39,12 @@ public static class ModDataHandler
         if (PluginGuids.TryGetValue(assembly, out var guid))
             return guid;
 
-        var callerAssembly = Assembly.GetCallingAssembly();
         var callerPluginInfo = Chainloader.PluginInfos.Values.FirstOrDefault(pluginInfo =>
-            pluginInfo.Instance?.GetType().Assembly == callerAssembly);
+            pluginInfo.Instance?.GetType().Assembly == assembly);
 
         if (callerPluginInfo == null)
             LethalModDataLib.Logger?.LogWarning(
-                $"Failed to get plugin info for assembly {callerAssembly.FullName}!");
+                $"Failed to get plugin info for assembly {assembly.FullName}!");
 
         PluginGuids.Add(assembly, callerPluginInfo?.Metadata?.GUID ?? "Unknown");
         return PluginGuids[assembly];
