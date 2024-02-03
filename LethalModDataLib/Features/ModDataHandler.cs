@@ -92,7 +92,7 @@ public static class ModDataHandler
     #region Initialisation
 
     /// <summary>
-    ///     Registers all mod data fields that are declared in assemblies of BepInEx plugins.
+    ///     Registers all fields decorated with ModData attributes in assemblies of BepInEx plugins.
     /// </summary>
     private static void RegisterModDataAttributes()
     {
@@ -102,8 +102,10 @@ public static class ModDataHandler
     }
 
     /// <summary>
-    ///     Saves all mod data fields that are declared in BepInEx plugins.
+    ///     Registers all fields decorated with ModData attributes in the given type.
     /// </summary>
+    /// <param name="guid"> GUID of the plugin that registered the fields. </param>
+    /// <param name="type"> Type to register the fields from. </param>
     private static void AddModDataFields(string guid, Type type)
     {
         foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
