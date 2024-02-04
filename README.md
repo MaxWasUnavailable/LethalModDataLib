@@ -22,28 +22,38 @@ There are 3 ways to use this library. They can all be used in the same project, 
 
 ### 1. Using the `ModData` attribute
 
-This is the easiest and most "automagic" way to use the library. Unless you need to manually handle saving and loading,
+This is the easiest and most automated way to use the library. Unless you need to manually handle saving and loading,
 this is the way to go. Note that this method still allows you to manually handle saving and/or loading if you need to,
-so you are not limited to the "automagic" part.
+so you are not limited to the automated part.
 
 Depending on the attribute configuration, the library will take care of saving and loading data for you, in a way that
 is seamless and "invisible" / does not require you to add any additional code beyond the attribute.
 
-The `ModData` attribute can be used to mark fields that should be saved and loaded. It has 4 parameters:
+The `ModData` attribute can be used to mark fields that should be saved and loaded through the handler's event hooks.
+This is its constructor signature:
 
-- `SaveWhen` - When the data should be saved
+```csharp
+public ModDataAttribute(SaveWhen saveWhen, LoadWhen loadWhen, SaveLocation saveLocation, string? baseKey = null)
+```
+
+These are options for its 4 parameters:
+
+- `SaveWhen` (enum) - When the data should be saved
     - `OnSave` - When the game is saved (Most frequent - also called by autosaves)
     - `OnAutoSave` - When the game is autosaved (= Whenever the ship returns to orbit)
     - `Manual` - Manually handled by you, the modder
-- `LoadWhen` - When the data should be loaded
+- `LoadWhen` (enum) - When the data should be loaded
     - `OnLoad` - When a save file is loaded, right after all vanilla loading is done
     - `OnRegister` - When the attribute is registered, as soon as possible
     - `Manual` - Manually handled by you, the modder
-- `SaveLocation` - Where the data should be saved
+- `SaveLocation` (enum) - Where the data should be saved
     - `GeneralSave` - In a .moddata file that fulfills the same purpose as vanilla's LCGeneralSaveData file
     - `CurrentSave` - In a .moddata file that is specific to the current save file
 - `BaseKey` - **Strongly recommended to leave default unless you know what you're doing** - The base key for the data.
-  This is used to create the key for the field in the .moddata file. If not set, the library will sort this out.
+  This is used to create the key for the field in the .moddata file. If not set, the library will sort this out. In
+  general, you should not need to set this unless you are e.g. trying to access the data from another mod (in which
+  case, you should probably be using the `GetFieldInfo` method in `ModDataHelper` instead, since duplicate attribute
+  keys can cause issues).
 
 > Example usage:
 
