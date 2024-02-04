@@ -15,12 +15,12 @@ public abstract class ModDataContainer
     ///     Gets the save location for the container.
     /// </summary>
     /// <remarks> Edit this to change the save location. </remarks>
-    internal SaveLocation SaveLocation { get; } = SaveLocation.CurrentSave;
+    protected SaveLocation SaveLocation { get; } = SaveLocation.CurrentSave;
 
     /// <summary>
     ///     Gets an optional prefix suffix to add to the GetPrefix() method.
     /// </summary>
-    internal string OptionalPrefixSuffix { get; } = string.Empty;
+    protected string OptionalPrefixSuffix { get; } = string.Empty;
 
     /// <summary>
     ///     Gets all fields in the container.
@@ -41,7 +41,7 @@ public abstract class ModDataContainer
     ///     Gets the prefix for moddata keys of fields in the container.
     /// </summary>
     /// <returns> The prefix for moddata keys of fields in the container. </returns>
-    internal string GetPrefix()
+    protected string GetPrefix()
     {
         var type = GetType();
         var prefixSuffix = string.Empty;
@@ -75,14 +75,14 @@ public abstract class ModDataContainer
     /// <summary>
     ///     Called before saving.
     /// </summary>
-    internal virtual void PreSave()
+    protected virtual void PreSave()
     {
     }
 
     /// <summary>
     ///     Called after saving.
     /// </summary>
-    internal virtual void PostSave()
+    protected virtual void PostSave()
     {
     }
 
@@ -109,7 +109,7 @@ public abstract class ModDataContainer
     /// <summary>
     ///     Called before loading.
     /// </summary>
-    internal virtual void PreLoad()
+    protected virtual void PreLoad()
     {
     }
 
@@ -117,7 +117,7 @@ public abstract class ModDataContainer
     ///     Called after loading.
     /// </summary>
     /// <remarks> This is a good place to sanity check loaded values. </remarks>
-    internal virtual void PostLoad()
+    protected virtual void PostLoad()
     {
     }
 }
