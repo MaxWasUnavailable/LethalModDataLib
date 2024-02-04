@@ -72,20 +72,20 @@ public static class ModDataHandler
     }
 
     /// <summary>
-    ///     Deletes a moddata file.
+    ///     Deletes a moddata file based on the save file name.
     /// </summary>
-    /// <param name="fileName"> Name of the file to delete. </param>
-    private static void DeleteModDataFile(string fileName)
+    /// <param name="saveName"> Name of the save file to delete the moddata file for. </param>
+    private static void DeleteModDataFile(string saveName)
     {
-        fileName += ".moddata";
+        saveName += ".moddata";
 
         try
         {
-            ES3.DeleteFile(fileName);
+            ES3.DeleteFile(saveName);
         }
         catch (Exception e)
         {
-            LethalModDataLib.Logger?.LogError($"Failed to delete file {fileName}! Exception: {e}");
+            LethalModDataLib.Logger?.LogError($"Failed to delete file {saveName}! Exception: {e}");
         }
     }
 
