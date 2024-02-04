@@ -16,7 +16,7 @@ public abstract class ModDataContainer
     /// </summary>
     /// <remarks> Edit this to change the save location. </remarks>
     internal SaveLocation SaveLocation { get; } = SaveLocation.CurrentSave;
-    
+
     /// <summary>
     ///     Gets an optional prefix suffix to add to the GetPrefix() method.
     /// </summary>
@@ -66,7 +66,7 @@ public abstract class ModDataContainer
         {
             var value = field.GetValue(this);
 
-            ModDataHandler.SaveData(value, prefix + field.Name, SaveLocation, autoAddGuid: false);
+            ModDataHandler.SaveData(value, prefix + field.Name, SaveLocation, false);
         }
 
         PostSave();
@@ -97,7 +97,8 @@ public abstract class ModDataContainer
 
         foreach (var field in GetFields())
         {
-            var value = ModDataHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation, autoAddGuid: false);
+            var value = ModDataHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation,
+                autoAddGuid: false);
 
             field.SetValue(this, value);
         }
