@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net48</TargetFramework>
-        <AssemblyName>LethalModDataLib</AssemblyName>
-        <Description>Library that adds a ModData (essentially a savefile for modded data) system to Lethal Company.</Description>
+        <AssemblyName>MaxWasUnavailable.LethalModDataLib</AssemblyName>
+        <Description>A library for Lethal Company, providing a standardised way to save and load modded data.</Description>
         <Version>0.0.1</Version>
         <Authors>MaxWasUnavailable</Authors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
