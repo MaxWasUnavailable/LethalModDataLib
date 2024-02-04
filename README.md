@@ -50,7 +50,6 @@ The `ModData` attribute can be used to mark fields that should be saved and load
 ```csharp
 public class SomeClass
 {
-    
     [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
     private int __someInt;
     
@@ -253,6 +252,13 @@ public class SomeClass
 
 ## Tips
 
-- The library automatically removes the paired moddata when a save is deleted, so handle this accordingly in your mod.
+- The library automatically removes the paired .moddata file when a save is deleted, so handle this accordingly in your
+  mod. (e.g. by hooking into the `PostDeleteFileEvent` event from `LethalEventsLib`)
 - Validate your data after loading, if you expect it to be in a certain state. If a value is missing when it is loaded,
-  it will be set to the type's `default` value (0, null, etc...).
+  it will be set to the type's `default` value (0, null, etc...). This can be done in e.g. the `PostLoad` method of a
+  `ModDataContainer` or in the method that loads the data. For attribute-based saving and loading, you can use the
+  `PostLoadGameEvent` event from `LethalEventsLib` to validate the data after it has been loaded.
+- Lethal Company sets its current save file to the last selected/loaded save file on game start. Keep this in mind
+  if you are using the `SaveLocation.CurrentSave` parameter, and are manually handling saving and/or loading. This is
+  not a concern if you are using the attribute without manual handling, or if you are using
+  the `SaveLocation.GeneralSave` parameter.
