@@ -5,7 +5,7 @@
 ## What is this?
 
 This library provides a standardised way to save and load persistent data for mods. It is designed to be easy to use and
-flexible; offering multiple different ways to interact with the system, depending on your needs.
+flexible, offering multiple different ways to interact with the system, depending on your needs.
 
 Data is saved in `.moddata` files, which are stored in the same location as the vanilla save files. Instead of having a
 single file, or a file per mod, the library has a file for each save file, and a file for general data - essentially
