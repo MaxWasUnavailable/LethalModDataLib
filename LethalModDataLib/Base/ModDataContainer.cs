@@ -15,12 +15,12 @@ public abstract class ModDataContainer
     ///     Gets the save location for the container.
     /// </summary>
     /// <remarks> Edit this to change the save location. </remarks>
-    protected virtual SaveLocation SaveLocation { get; } = SaveLocation.CurrentSave;
+    protected virtual SaveLocation SaveLocation { get; set; } = SaveLocation.CurrentSave;
 
     /// <summary>
     ///     Gets an optional prefix suffix to add to the GetPrefix() method.
     /// </summary>
-    protected virtual string OptionalPrefixSuffix { get; } = string.Empty;
+    protected virtual string OptionalPrefixSuffix { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets all fields in the container.
