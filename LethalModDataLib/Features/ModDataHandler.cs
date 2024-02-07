@@ -92,6 +92,14 @@ public static class ModDataHandler
                                              BindingFlags.Static))
             if (Attribute.IsDefined(field, typeof(ModDataAttribute)))
             {
+                if (!field.IsStatic)
+                {
+                    LethalModDataLib.Logger?.LogWarning(
+                        $"Field {field.Name} from {type.AssemblyQualifiedName} is not static! " +
+                        "ModData attributed fields must be static!");
+                    continue;
+                }
+
                 if (ModDataEntries.ContainsKey(field))
                 {
                     LethalModDataLib.Logger?.LogWarning(
