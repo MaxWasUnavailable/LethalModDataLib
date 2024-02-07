@@ -29,6 +29,11 @@ public class LethalModDataLib : BaseUnityPlugin
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
     }
 
+    /// <summary>
+    ///     Check if the version of LethalModDataLib has changed since the last time the game was run.
+    ///     Save the current version to general mod data.
+    ///     This is useful for debugging & bug reports.
+    /// </summary>
     private static void VersionCheck()
     {
         // Load LethalModDataLib version from general mod data
@@ -45,7 +50,10 @@ public class LethalModDataLib : BaseUnityPlugin
         {
             // Check if version is equal to current version
             if (version == PluginInfo.PLUGIN_VERSION)
-                Logger?.LogDebug($"LethalModDataLib version ({PluginInfo.PLUGIN_VERSION}) matches last saved version ({version}).");
+            {
+                Logger?.LogDebug(
+                    $"LethalModDataLib version ({PluginInfo.PLUGIN_VERSION}) matches last saved version ({version}).");
+            }
             else
             {
                 ModDataHandler.SaveData(ModVersionKey + "_old", version, SaveLocation.GeneralSave);
@@ -53,7 +61,7 @@ public class LethalModDataLib : BaseUnityPlugin
                     $"Mismatch between last saved LethalModDataLib version ({version})" +
                     $"and current version ({PluginInfo.PLUGIN_VERSION})." +
                     $"This is normal if you have updated LethalModDataLib." +
-                    $"Make sure to check the changelog for breaking changes.");   
+                    $"Make sure to check the changelog for breaking changes.");
             }
         }
 
