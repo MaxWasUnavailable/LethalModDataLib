@@ -35,4 +35,18 @@ public static class ModDataHelper
     {
         return GameNetworkManager.generalSaveDataName;
     }
+
+    /// <summary>
+    ///     Checks if a field is a k__BackingField.
+    /// </summary>
+    /// <param name="fieldInfo"> Field info to check. </param>
+    /// <returns> True if the field is a k__BackingField, false otherwise. </returns>
+    /// <remarks>
+    ///     This is technically an imperfect check, since a user *could* name their fields with k__BackingField. Considering
+    ///     as good as no one would do that, this is a good enough check.
+    /// </remarks>
+    public static bool IsKBackingField(FieldInfo fieldInfo)
+    {
+        return fieldInfo.Name.Contains("k__BackingField");
+    }
 }
