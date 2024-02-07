@@ -26,5 +26,10 @@ public enum IgnoreFlag
     /// <summary>
     ///     Ignore the field or property if it is null.
     /// </summary>
-    IfNull = 4
+    IfNull = 4,
+    
+    /// <summary>
+    ///     Ignore the field or property if it is default.
+    /// </summary>
+    IfDefault = 8
 }
