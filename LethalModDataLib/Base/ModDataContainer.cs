@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -73,8 +74,13 @@ public abstract class ModDataContainer
                     continue;
 
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
-                {
                     if (field.GetValue(this) == null)
+                        continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                {
+                    var defaultValue = field.FieldType.IsValueType ? Activator.CreateInstance(field.FieldType) : null;
+                    if (field.GetValue(this).Equals(defaultValue))
                         continue;
                 }
             }
@@ -120,8 +126,13 @@ public abstract class ModDataContainer
                     continue;
 
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
-                {
                     if (field.GetValue(this) == null)
+                        continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                {
+                    var defaultValue = field.FieldType.IsValueType ? Activator.CreateInstance(field.FieldType) : null;
+                    if (field.GetValue(this).Equals(defaultValue))
                         continue;
                 }
             }
