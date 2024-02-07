@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LethalModDataLib.Attributes;
 using LethalModDataLib.Enums;
 using LethalModDataLib.Features;
 
@@ -64,6 +65,20 @@ public abstract class ModDataContainer
 
         foreach (var field in GetFields())
         {
+            // If has IgnoreAttribute, check if it should be ignored
+            var ignoreAttribute = field.GetCustomAttribute<IgnoreAttribute>();
+            if (ignoreAttribute != null)
+            {
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnSave))
+                    continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                {
+                    if (field.GetValue(this) == null)
+                        continue;
+                }
+            }
+
             var value = field.GetValue(this);
 
             ModDataHandler.SaveData(value, prefix + field.Name, SaveLocation, false);
@@ -97,6 +112,20 @@ public abstract class ModDataContainer
 
         foreach (var field in GetFields())
         {
+            // If has IgnoreAttribute, check if it should be ignored
+            var ignoreAttribute = field.GetCustomAttribute<IgnoreAttribute>();
+            if (ignoreAttribute != null)
+            {
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnLoad))
+                    continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                {
+                    if (field.GetValue(this) == null)
+                        continue;
+                }
+            }
+
             var value = ModDataHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation,
                 autoAddGuid: false);
 
