@@ -67,7 +67,7 @@ public abstract class ModDataContainer
         foreach (var field in GetFields())
         {
             // If has IgnoreAttribute, check if it should be ignored
-            var ignoreAttribute = field.GetCustomAttribute<IgnoreAttribute>();
+            var ignoreAttribute = field.GetCustomAttribute<ModDataIgnoreAttribute>();
             if (ignoreAttribute != null)
             {
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnSave))
@@ -119,7 +119,7 @@ public abstract class ModDataContainer
         foreach (var field in GetFields())
         {
             // If has IgnoreAttribute, check if it should be ignored
-            var ignoreAttribute = field.GetCustomAttribute<IgnoreAttribute>();
+            var ignoreAttribute = field.GetCustomAttribute<ModDataIgnoreAttribute>();
             if (ignoreAttribute != null)
             {
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnLoad))
