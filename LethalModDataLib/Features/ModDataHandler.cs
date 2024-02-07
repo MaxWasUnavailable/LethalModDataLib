@@ -490,14 +490,14 @@ public static class ModDataHandler
         if (ModDataProperties[property].BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
-                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no base key!");
+                $"Property {property.Name} from {property.DeclaringType?.FullName} has no base key!");
             return false;
         }
 
         if (property.GetGetMethod() == null)
         {
             LethalModDataLib.Logger?.LogDebug(
-                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no getter, ignoring...");
+                $"Property {property.Name} from {property.DeclaringType?.FullName} has no getter, ignoring...");
             return false;
         }
 
