@@ -1,9 +1,14 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using BepInEx.Bootstrap;
 
 namespace LethalModDataLib.Features;
 
 public static class ModDataHelper
 {
+    private static readonly Dictionary<Assembly, string> PluginGuids = new();
+
     /// <summary>
     ///     Gets the field info for a field. Used to manually handle saving and/or loading of an attributed field.
     /// </summary>
@@ -48,5 +53,26 @@ public static class ModDataHelper
     public static bool IsKBackingField(FieldInfo fieldInfo)
     {
         return fieldInfo.Name.Contains("k__BackingField");
+    }
+
+    /// <summary>
+    ///     Gets the GUID of the plugin that called the method.
+    /// </summary>
+    /// <param name="assembly"> Assembly of the plugin that called the method. </param>
+    /// <returns> The GUID of the plugin that called the method. </returns>
+    public static string GetCallingPluginGuid(Assembly assembly)
+    {
+        if (PluginGuids.TryGetValue(assembly, out var guid))
+            return guid;
+
+        var callerPluginInfo = Chainloader.PluginInfos.Values.FirstOrDefault(pluginInfo =>
+            pluginInfo.Instance?.GetType().Assembly == assembly);
+
+        if (callerPluginInfo == null)
+            LethalModDataLib.Logger?.LogWarning(
+                $"Failed to get plugin info for assembly {assembly.FullName}!");
+
+        PluginGuids.Add(assembly, callerPluginInfo?.Metadata?.GUID ?? "Unknown");
+        return PluginGuids[assembly];
     }
 }

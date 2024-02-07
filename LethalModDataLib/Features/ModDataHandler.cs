@@ -12,7 +12,6 @@ namespace LethalModDataLib.Features;
 public static class ModDataHandler
 {
     private static readonly Dictionary<FieldInfo, ModDataAttribute> ModDataEntries = new();
-    private static readonly Dictionary<Assembly, string> PluginGuids = new();
 
     /// <summary>
     ///     Verifies that the key and file name are not null or empty.
@@ -30,32 +29,11 @@ public static class ModDataHandler
     }
 
     /// <summary>
-    ///     Gets the GUID of the plugin that called the method.
-    /// </summary>
-    /// <param name="assembly"> Assembly of the plugin that called the method. </param>
-    /// <returns> The GUID of the plugin that called the method. </returns>
-    private static string GetCallingPluginGuid(Assembly assembly)
-    {
-        if (PluginGuids.TryGetValue(assembly, out var guid))
-            return guid;
-
-        var callerPluginInfo = Chainloader.PluginInfos.Values.FirstOrDefault(pluginInfo =>
-            pluginInfo.Instance?.GetType().Assembly == assembly);
-
-        if (callerPluginInfo == null)
-            LethalModDataLib.Logger?.LogWarning(
-                $"Failed to get plugin info for assembly {assembly.FullName}!");
-
-        PluginGuids.Add(assembly, callerPluginInfo?.Metadata?.GUID ?? "Unknown");
-        return PluginGuids[assembly];
-    }
-
-    /// <summary>
     ///     Gets the moddata key for a field registered with the ModDataAttribute.
     /// </summary>
     /// <param name="field"> Field to get the moddata key for. </param>
     /// <returns> The moddata key for the field. </returns>
-    public static string GetFieldKey(FieldInfo field)
+    private static string GetFieldKey(FieldInfo field)
     {
         return ModDataEntries[field].BaseKey + "." + field.Name;
     }
@@ -66,7 +44,7 @@ public static class ModDataHandler
     /// <param name="type"> Type of the field (used to fetch the namespace & class of the field's parent). </param>
     /// <param name="guid"> GUID of the plugin that registered the field. </param>
     /// <returns> The generated base key for the field. </returns>
-    public static string GenerateFieldBaseKey(Type type, string guid)
+    private static string GenerateFieldBaseKey(Type type, string guid)
     {
         return guid + "." + type.FullName;
     }
@@ -98,7 +76,9 @@ public static class ModDataHandler
     {
         foreach (var pluginInfo in Chainloader.PluginInfos.Values)
         foreach (var type in pluginInfo.Instance!.GetType().Assembly.GetTypes())
+        {
             AddModDataFields(pluginInfo.Metadata.GUID, type);
+        }
     }
 
     /// <summary>
@@ -237,7 +217,10 @@ public static class ModDataHandler
     /// <param name="key"> Key to load the data from. </param>
     /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
     /// <param name="defaultValue"> Default value to return if the data could not be loaded. </param>
-    /// <param name="autoAddGuid"> Whether or not to automatically add the GUID of the plugin that called the method to the key. </param>
+    /// <param name="autoAddGuid">
+    ///     Whether or not to automatically add the GUID of the plugin that called the method to the
+    ///     key.
+    /// </param>
     /// <typeparam name="T"> Type of the data to load. </typeparam>
     /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
     /// <exception cref="ArgumentOutOfRangeException"> Thrown if the save location is invalid. </exception>
@@ -247,7 +230,7 @@ public static class ModDataHandler
     {
         if (autoAddGuid)
         {
-            var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
+            var guid = ModDataHelper.GetCallingPluginGuid(Assembly.GetCallingAssembly());
 
             if (!key.StartsWith(guid))
                 key = guid + "." + key;
@@ -336,7 +319,7 @@ public static class ModDataHandler
     {
         if (autoAddGuid)
         {
-            var guid = GetCallingPluginGuid(Assembly.GetCallingAssembly());
+            var guid = ModDataHelper.GetCallingPluginGuid(Assembly.GetCallingAssembly());
 
             if (!key.StartsWith(guid))
                 key = guid + "." + key;
