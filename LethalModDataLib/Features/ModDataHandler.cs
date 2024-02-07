@@ -33,20 +33,32 @@ public static class ModDataHandler
     ///     Gets the moddata key for a field registered with the ModDataAttribute.
     /// </summary>
     /// <param name="field"> Field to get the moddata key for. </param>
+    /// <param name="keyPostfix"> Postfix to append to the key. Used for instance-specific keys. </param>
     /// <returns> The moddata key for the field. </returns>
-    private static string GetFieldKey(FieldInfo field)
+    private static string GetFieldKey(FieldInfo field, string? keyPostfix = null)
     {
-        return ModDataFields[field].BaseKey + "." + field.Name;
+        var key = ModDataFields[field].BaseKey + ".";
+
+        if (keyPostfix != null)
+            return key + keyPostfix + "." + field.Name;
+
+        return key + field.Name;
     }
 
     /// <summary>
     ///     Generates a base key for a property registered with the ModDataAttribute.
     /// </summary>
     /// <param name="property"> Property to get the moddata key for. </param>
+    /// <param name="keyPostfix"> Postfix to append to the key. Used for instance-specific keys. </param>
     /// <returns> The moddata key for the property. </returns>
-    private static string GetPropertyKey(PropertyInfo property)
+    private static string GetPropertyKey(PropertyInfo property, string? keyPostfix = null)
     {
-        return ModDataProperties[property].BaseKey + "." + property.Name;
+        var key = ModDataProperties[property].BaseKey + ".";
+
+        if (keyPostfix != null)
+            return key + keyPostfix + "." + property.Name;
+
+        return key + property.Name;
     }
 
     /// <summary>
@@ -165,15 +177,45 @@ public static class ModDataHandler
 
     #region EventHandlers
 
+    private static void HandleSaveField(FieldInfo field)
+    {
+        if (!SaveData(field))
+            LethalModDataLib.Logger?.LogWarning(
+                $"Failed to save field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
+    }
+
+    private static void HandleSaveProperty(PropertyInfo property)
+    {
+        if (!SaveData(property))
+            LethalModDataLib.Logger?.LogWarning(
+                $"Failed to save property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName}!");
+    }
+
+    private static void HandleLoadField(FieldInfo field)
+    {
+        if (!LoadData(field))
+            LethalModDataLib.Logger?.LogWarning(
+                $"Failed to load field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
+    }
+
+    private static void HandleLoadProperty(PropertyInfo property)
+    {
+        if (!LoadData(property))
+            LethalModDataLib.Logger?.LogWarning(
+                $"Failed to load property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName}!");
+    }
+
     /// <summary>
     ///     Saves all mod data fields that have their SaveWhen set to OnSave.
     /// </summary>
     private static void OnSave(bool isChallengeFile, string saveFileName)
     {
         foreach (var field in ModDataFields.Keys.Where(field => ModDataFields[field].SaveWhen == SaveWhen.OnSave))
-            if (!SaveData(field))
-                LethalModDataLib.Logger?.LogWarning(
-                    $"Failed to save field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
+            HandleSaveField(field);
+
+        foreach (var property in ModDataProperties.Keys.Where(property =>
+                     ModDataProperties[property].SaveWhen == SaveWhen.OnSave))
+            HandleSaveProperty(property);
     }
 
     /// <summary>
@@ -181,11 +223,12 @@ public static class ModDataHandler
     /// </summary>
     private static void OnAutoSave(bool isChallengeFile, string saveFileName)
     {
-        foreach (var field in ModDataFields.Keys.Where(field =>
-                     ModDataFields[field].SaveWhen == SaveWhen.OnAutoSave))
-            if (!SaveData(field))
-                LethalModDataLib.Logger?.LogWarning(
-                    $"Failed to save field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
+        foreach (var field in ModDataFields.Keys.Where(field => ModDataFields[field].SaveWhen == SaveWhen.OnAutoSave))
+            HandleSaveField(field);
+
+        foreach (var property in ModDataProperties.Keys.Where(property =>
+                     ModDataProperties[property].SaveWhen == SaveWhen.OnAutoSave))
+            HandleSaveProperty(property);
     }
 
     /// <summary>
@@ -194,9 +237,11 @@ public static class ModDataHandler
     private static void OnLoad(bool isChallengeFile, string saveFileName)
     {
         foreach (var field in ModDataFields.Keys.Where(field => ModDataFields[field].LoadWhen == LoadWhen.OnLoad))
-            if (!LoadData(field))
-                LethalModDataLib.Logger?.LogWarning(
-                    $"Failed to load field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
+            HandleLoadField(field);
+
+        foreach (var property in ModDataProperties.Keys.Where(property =>
+                     ModDataProperties[property].LoadWhen == LoadWhen.OnLoad))
+            HandleLoadProperty(property);
     }
 
     /// <summary>
@@ -286,9 +331,11 @@ public static class ModDataHandler
     ///     Loads data based on the ModDataAttribute attached to the field.
     /// </summary>
     /// <param name="field"> Field to load. </param>
+    /// <param name="instance"> Instance to load the data into, if the field is not static. </param>
+    /// <param name="keyPostfix"> Postfix to append to the key. Used for instance-specific keys. </param>
     /// <returns> True if the data was loaded successfully, false otherwise. </returns>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool LoadData(FieldInfo field)
+    public static bool LoadData(FieldInfo field, object? instance = null, string? keyPostfix = null)
     {
         if (ModDataFields[field].BaseKey == null)
         {
@@ -297,12 +344,39 @@ public static class ModDataHandler
             return false;
         }
 
-        var key = GetFieldKey(field);
+        var key = GetFieldKey(field, keyPostfix);
         var saveLocation = ModDataFields[field].SaveLocation;
 
         var value = LoadData<object>(key, saveLocation: saveLocation, autoAddGuid: false);
 
-        field.SetValue(null, value);
+        field.SetValue(instance, value);
+        return true;
+    }
+
+
+    /// <summary>
+    ///     Loads data based on the ModDataAttribute attached to the property.
+    /// </summary>
+    /// <param name="property"> Property to load. </param>
+    /// <param name="instance"> Instance to load the data into, if the property is not static. </param>
+    /// <param name="keyPostfix"> Postfix to append to the key. Used for instance-specific keys. </param>
+    /// <returns> True if the data was loaded successfully, false otherwise. </returns>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static bool LoadData(PropertyInfo property, object? instance = null, string? keyPostfix = null)
+    {
+        if (ModDataProperties[property].BaseKey == null)
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no base key!");
+            return false;
+        }
+
+        var key = GetPropertyKey(property, keyPostfix);
+        var saveLocation = ModDataProperties[property].SaveLocation;
+
+        var value = LoadData<object>(key, saveLocation: saveLocation, autoAddGuid: false);
+
+        property.SetValue(instance, value);
         return true;
     }
 
@@ -375,9 +449,11 @@ public static class ModDataHandler
     ///     Saves data based on the ModDataAttribute attached to the field.
     /// </summary>
     /// <param name="field"> Field to save. </param>
+    /// <param name="instance"> Instance to load the data into, if the field is not static. </param>
+    /// <param name="keyPostfix"> Postfix to append to the key. Used for instance-specific keys. </param>
     /// <returns> True if the data was saved successfully, false otherwise. </returns>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool SaveData(FieldInfo field)
+    public static bool SaveData(FieldInfo field, object? instance = null, string? keyPostfix = null)
     {
         if (!ModDataFields.ContainsKey(field))
         {
@@ -393,10 +469,42 @@ public static class ModDataHandler
             return false;
         }
 
-        var key = GetFieldKey(field);
+        var key = GetFieldKey(field, keyPostfix);
         var saveLocation = ModDataFields[field].SaveLocation;
 
-        var value = field.GetValue(null);
+        var value = field.GetValue(instance);
+
+        return SaveData(value, key, saveLocation, false);
+    }
+
+    /// <summary>
+    ///     Saves data based on the ModDataAttribute attached to the property.
+    /// </summary>
+    /// <param name="field"> Field to save. </param>
+    /// <param name="instance"> Instance to load the data into, if the property is not static. </param>
+    /// <param name="keyPostfix"> Postfix to append to the key. Used for instance-specific keys. </param>
+    /// <returns> True if the data was saved successfully, false otherwise. </returns>
+    /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
+    public static bool SaveData(PropertyInfo property, object? instance = null, string? keyPostfix = null)
+    {
+        if (!ModDataProperties.ContainsKey(property))
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} is not registered!");
+            return false;
+        }
+
+        if (ModDataProperties[property].BaseKey == null)
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no base key!");
+            return false;
+        }
+
+        var key = GetPropertyKey(property, keyPostfix);
+        var saveLocation = ModDataProperties[property].SaveLocation;
+
+        var value = property.GetValue(instance);
 
         return SaveData(value, key, saveLocation, false);
     }
