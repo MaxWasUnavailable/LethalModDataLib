@@ -42,6 +42,25 @@ public abstract class ModDataContainer
     }
 
     /// <summary>
+    ///     Gets all properties in the container.
+    /// </summary>
+    /// <returns> All properties in the container. </returns>
+    private List<PropertyInfo> GetProperties()
+    {
+        var type = GetType();
+
+        // Get all properties in the container
+        var properties = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
+                                            BindingFlags.Static | BindingFlags.DeclaredOnly);
+
+        // Ignore SaveLocation and OptionalPrefixSuffix properties, since those may be overridden in derived classes
+        properties = properties.Where(property =>
+            property.Name != nameof(SaveLocation) && property.Name != nameof(OptionalPrefixSuffix)).ToArray();
+
+        return properties.ToList();
+    }
+
+    /// <summary>
     ///     Gets the prefix for moddata keys of fields in the container.
     /// </summary>
     /// <returns> The prefix for moddata keys of fields in the container. </returns>
@@ -60,10 +79,8 @@ public abstract class ModDataContainer
     /// <summary>
     ///     Saves all fields in the container.
     /// </summary>
-    public void Save()
+    private void SaveFields()
     {
-        PreSave();
-
         var prefix = GetPrefix();
 
         foreach (var field in GetFields())
@@ -82,8 +99,8 @@ public abstract class ModDataContainer
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
                 {
                     var defaultValue = field.FieldType.IsValueType ? Activator.CreateInstance(field.FieldType) : null;
-                    if (field.GetValue(this).Equals(defaultValue))
-                        continue;
+
+                    if (field.GetValue(this).Equals(defaultValue)) continue;
                 }
             }
 
@@ -91,6 +108,54 @@ public abstract class ModDataContainer
 
             ModDataHandler.SaveData(value, prefix + field.Name, SaveLocation, false);
         }
+    }
+
+    /// <summary>
+    ///     Saves all properties in the container.
+    ///     TODO: Handle properties with null / private setters
+    /// </summary>
+    private void SaveProperties()
+    {
+        var prefix = GetPrefix();
+
+        foreach (var property in GetProperties())
+        {
+            // If has IgnoreAttribute, check if it should be ignored
+            var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
+            if (ignoreAttribute != null)
+            {
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnSave))
+                    continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                    if (property.GetValue(this) == null)
+                        continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                {
+                    var defaultValue = property.PropertyType.IsValueType
+                        ? Activator.CreateInstance(property.PropertyType)
+                        : null;
+
+                    if (property.GetValue(this).Equals(defaultValue)) continue;
+                }
+            }
+
+            var value = property.GetValue(this);
+
+            ModDataHandler.SaveData(value, prefix + property.Name, SaveLocation, false);
+        }
+    }
+
+    /// <summary>
+    ///     Saves all fields in the container.
+    /// </summary>
+    public void Save()
+    {
+        PreSave();
+
+        SaveFields();
+        SaveProperties();
 
         PostSave();
     }
@@ -112,10 +177,8 @@ public abstract class ModDataContainer
     /// <summary>
     ///     Loads all fields in the container.
     /// </summary>
-    public void Load()
+    private void LoadFields()
     {
-        PreLoad();
-
         var prefix = GetPrefix();
 
         foreach (var field in GetFields())
@@ -134,8 +197,8 @@ public abstract class ModDataContainer
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
                 {
                     var defaultValue = field.FieldType.IsValueType ? Activator.CreateInstance(field.FieldType) : null;
-                    if (field.GetValue(this).Equals(defaultValue))
-                        continue;
+
+                    if (field.GetValue(this).Equals(defaultValue)) continue;
                 }
             }
 
@@ -144,6 +207,55 @@ public abstract class ModDataContainer
 
             field.SetValue(this, value);
         }
+    }
+
+    /// <summary>
+    ///     Loads all properties in the container.
+    ///     // TODO: Handle properties with null / private setters
+    /// </summary>
+    private void LoadProperties()
+    {
+        var prefix = GetPrefix();
+
+        foreach (var property in GetProperties())
+        {
+            // If has IgnoreAttribute, check if it should be ignored
+            var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
+            if (ignoreAttribute != null)
+            {
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnLoad))
+                    continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                    if (property.GetValue(this) == null)
+                        continue;
+
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                {
+                    var defaultValue = property.PropertyType.IsValueType
+                        ? Activator.CreateInstance(property.PropertyType)
+                        : null;
+
+                    if (property.GetValue(this).Equals(defaultValue)) continue;
+                }
+            }
+
+            var value = ModDataHandler.LoadData<object>(prefix + property.Name, saveLocation: SaveLocation,
+                autoAddGuid: false);
+
+            property.SetValue(this, value);
+        }
+    }
+
+    /// <summary>
+    ///     Loads all fields in the container.
+    /// </summary>
+    public void Load()
+    {
+        PreLoad();
+
+        LoadFields();
+        LoadProperties();
 
         PostLoad();
     }
