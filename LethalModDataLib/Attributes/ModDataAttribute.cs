@@ -4,13 +4,13 @@ using LethalModDataLib.Enums;
 namespace LethalModDataLib.Attributes;
 
 /// <summary>
-///     Attribute to mark fields to be saved and loaded by the mod data system.
+///     Attribute to mark static fields or properties to be saved and loaded by the mod data system.
 /// </summary>
-[AttributeUsage(AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 public class ModDataAttribute : Attribute
 {
     /// <summary>
-    ///     Attribute to mark fields to be saved and loaded by the mod data system.
+    ///     Attribute to mark fields or properties to be saved and loaded by the mod data system.
     /// </summary>
     /// <param name="saveWhen"> When to save the field. <see cref="SaveWhen" /> </param>
     /// <param name="loadWhen"> When to load the field. <see cref="LoadWhen" /> </param>
