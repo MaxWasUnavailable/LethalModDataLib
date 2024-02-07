@@ -11,7 +11,8 @@ namespace LethalModDataLib.Features;
 
 public static class ModDataHandler
 {
-    private static readonly Dictionary<FieldInfo, ModDataAttribute> ModDataEntries = new();
+    private static readonly Dictionary<FieldInfo, ModDataAttribute> ModDataFields = new();
+    private static readonly Dictionary<PropertyInfo, ModDataAttribute> ModDataProperties = new();
 
     /// <summary>
     ///     Verifies that the key and file name are not null or empty.
@@ -35,16 +36,26 @@ public static class ModDataHandler
     /// <returns> The moddata key for the field. </returns>
     private static string GetFieldKey(FieldInfo field)
     {
-        return ModDataEntries[field].BaseKey + "." + field.Name;
+        return ModDataFields[field].BaseKey + "." + field.Name;
     }
 
     /// <summary>
-    ///     Generates a base key for a field registered with the ModDataAttribute.
+    ///     Generates a base key for a property registered with the ModDataAttribute.
     /// </summary>
-    /// <param name="type"> Type of the field (used to fetch the namespace & class of the field's parent). </param>
-    /// <param name="guid"> GUID of the plugin that registered the field. </param>
-    /// <returns> The generated base key for the field. </returns>
-    private static string GenerateFieldBaseKey(Type type, string guid)
+    /// <param name="property"> Property to get the moddata key for. </param>
+    /// <returns> The moddata key for the property. </returns>
+    private static string GetPropertyKey(PropertyInfo property)
+    {
+        return ModDataProperties[property].BaseKey + "." + property.Name;
+    }
+
+    /// <summary>
+    ///     Generates a base key for a field or property registered with the ModDataAttribute.
+    /// </summary>
+    /// <param name="type"> Type of the field or property (used to fetch the namespace & class of the its parent). </param>
+    /// <param name="guid"> GUID of the plugin that registered the field or property. </param>
+    /// <returns> The generated base key for the field or property. </returns>
+    private static string GenerateBaseKey(Type type, string guid)
     {
         return guid + "." + type.FullName;
     }
@@ -70,7 +81,7 @@ public static class ModDataHandler
     #region Initialisation
 
     /// <summary>
-    ///     Registers all fields decorated with ModData attributes in assemblies of BepInEx plugins.
+    ///     Registers all fields & properties decorated with ModData attributes in assemblies of BepInEx plugins.
     /// </summary>
     private static void RegisterModDataAttributes()
     {
@@ -78,6 +89,7 @@ public static class ModDataHandler
         foreach (var type in pluginInfo.Instance!.GetType().Assembly.GetTypes())
         {
             AddModDataFields(pluginInfo.Metadata.GUID, type);
+            AddModDataProperties(pluginInfo.Metadata.GUID, type);
         }
     }
 
@@ -88,8 +100,7 @@ public static class ModDataHandler
     /// <param name="type"> Type to register the fields from. </param>
     private static void AddModDataFields(string guid, Type type)
     {
-        foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
-                                             BindingFlags.Static))
+        foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
             if (Attribute.IsDefined(field, typeof(ModDataAttribute)))
             {
                 if (!field.IsStatic)
@@ -100,17 +111,36 @@ public static class ModDataHandler
                     continue;
                 }
 
-                if (ModDataEntries.ContainsKey(field))
+                if (ModDataFields.ContainsKey(field))
                 {
                     LethalModDataLib.Logger?.LogWarning(
                         $"Field {field.Name} from {type.AssemblyQualifiedName} is already registered!");
                     continue;
                 }
 
-                ModDataEntries.Add(field, field.GetCustomAttribute<ModDataAttribute>());
-                ModDataEntries[field].BaseKey ??= GenerateFieldBaseKey(type, guid);
+                ModDataFields.Add(field, field.GetCustomAttribute<ModDataAttribute>());
+                ModDataFields[field].BaseKey ??= GenerateBaseKey(type, guid);
                 LethalModDataLib.Logger?.LogDebug(
                     $"Added field {field.Name} from {guid}.{type.FullName} to the mod data system!");
+            }
+    }
+
+    private static void AddModDataProperties(string guid, Type type)
+    {
+        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+            if (Attribute.IsDefined(property, typeof(ModDataAttribute)))
+            {
+                if (ModDataProperties.ContainsKey(property))
+                {
+                    LethalModDataLib.Logger?.LogWarning(
+                        $"Property {property.Name} from {type.AssemblyQualifiedName} is already registered!");
+                    continue;
+                }
+
+                ModDataProperties.Add(property, property.GetCustomAttribute<ModDataAttribute>());
+                ModDataProperties[property].BaseKey ??= GenerateBaseKey(type, guid);
+                LethalModDataLib.Logger?.LogDebug(
+                    $"Added property {property.Name} from {guid}.{type.FullName} to the mod data system!");
             }
     }
 
@@ -140,7 +170,7 @@ public static class ModDataHandler
     /// </summary>
     private static void OnSave(bool isChallengeFile, string saveFileName)
     {
-        foreach (var field in ModDataEntries.Keys.Where(field => ModDataEntries[field].SaveWhen == SaveWhen.OnSave))
+        foreach (var field in ModDataFields.Keys.Where(field => ModDataFields[field].SaveWhen == SaveWhen.OnSave))
             if (!SaveData(field))
                 LethalModDataLib.Logger?.LogWarning(
                     $"Failed to save field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
@@ -151,8 +181,8 @@ public static class ModDataHandler
     /// </summary>
     private static void OnAutoSave(bool isChallengeFile, string saveFileName)
     {
-        foreach (var field in ModDataEntries.Keys.Where(field =>
-                     ModDataEntries[field].SaveWhen == SaveWhen.OnAutoSave))
+        foreach (var field in ModDataFields.Keys.Where(field =>
+                     ModDataFields[field].SaveWhen == SaveWhen.OnAutoSave))
             if (!SaveData(field))
                 LethalModDataLib.Logger?.LogWarning(
                     $"Failed to save field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
@@ -163,7 +193,7 @@ public static class ModDataHandler
     /// </summary>
     private static void OnLoad(bool isChallengeFile, string saveFileName)
     {
-        foreach (var field in ModDataEntries.Keys.Where(field => ModDataEntries[field].LoadWhen == LoadWhen.OnLoad))
+        foreach (var field in ModDataFields.Keys.Where(field => ModDataFields[field].LoadWhen == LoadWhen.OnLoad))
             if (!LoadData(field))
                 LethalModDataLib.Logger?.LogWarning(
                     $"Failed to load field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName}!");
@@ -260,7 +290,7 @@ public static class ModDataHandler
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool LoadData(FieldInfo field)
     {
-        if (ModDataEntries[field].BaseKey == null)
+        if (ModDataFields[field].BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
                 $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
@@ -268,7 +298,7 @@ public static class ModDataHandler
         }
 
         var key = GetFieldKey(field);
-        var saveLocation = ModDataEntries[field].SaveLocation;
+        var saveLocation = ModDataFields[field].SaveLocation;
 
         var value = LoadData<object>(key, saveLocation: saveLocation, autoAddGuid: false);
 
@@ -349,14 +379,14 @@ public static class ModDataHandler
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool SaveData(FieldInfo field)
     {
-        if (!ModDataEntries.ContainsKey(field))
+        if (!ModDataFields.ContainsKey(field))
         {
             LethalModDataLib.Logger?.LogWarning(
                 $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} is not registered!");
             return false;
         }
 
-        if (ModDataEntries[field].BaseKey == null)
+        if (ModDataFields[field].BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
                 $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
@@ -364,7 +394,7 @@ public static class ModDataHandler
         }
 
         var key = GetFieldKey(field);
-        var saveLocation = ModDataEntries[field].SaveLocation;
+        var saveLocation = ModDataFields[field].SaveLocation;
 
         var value = field.GetValue(null);
 
