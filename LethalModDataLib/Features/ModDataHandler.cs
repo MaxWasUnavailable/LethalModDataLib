@@ -371,6 +371,13 @@ public static class ModDataHandler
             return false;
         }
 
+        if (property.GetSetMethod() == null)
+        {
+            LethalModDataLib.Logger?.LogDebug(
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no setter, ignoring...");
+            return false;
+        }
+
         var key = GetPropertyKey(property, keyPostfix);
         var saveLocation = ModDataProperties[property].SaveLocation;
 
@@ -455,13 +462,6 @@ public static class ModDataHandler
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool SaveData(FieldInfo field, object? instance = null, string? keyPostfix = null)
     {
-        if (!ModDataFields.ContainsKey(field))
-        {
-            LethalModDataLib.Logger?.LogWarning(
-                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} is not registered!");
-            return false;
-        }
-
         if (ModDataFields[field].BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
@@ -480,24 +480,24 @@ public static class ModDataHandler
     /// <summary>
     ///     Saves data based on the ModDataAttribute attached to the property.
     /// </summary>
-    /// <param name="field"> Field to save. </param>
+    /// <param name="property"> Property to save. </param>
     /// <param name="instance"> Instance to load the data into, if the property is not static. </param>
     /// <param name="keyPostfix"> Postfix to append to the key. Used for instance-specific keys. </param>
     /// <returns> True if the data was saved successfully, false otherwise. </returns>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool SaveData(PropertyInfo property, object? instance = null, string? keyPostfix = null)
     {
-        if (!ModDataProperties.ContainsKey(property))
-        {
-            LethalModDataLib.Logger?.LogWarning(
-                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} is not registered!");
-            return false;
-        }
-
         if (ModDataProperties[property].BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
                 $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no base key!");
+            return false;
+        }
+
+        if (property.GetGetMethod() == null)
+        {
+            LethalModDataLib.Logger?.LogDebug(
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no getter, ignoring...");
             return false;
         }
 
