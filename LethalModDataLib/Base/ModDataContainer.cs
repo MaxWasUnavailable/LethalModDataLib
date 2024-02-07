@@ -120,6 +120,9 @@ public abstract class ModDataContainer
 
         foreach (var property in GetProperties())
         {
+            // If property has no getter, skip it
+            if (property.GetGetMethod() == null) continue;
+
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
             if (ignoreAttribute != null)
@@ -219,6 +222,9 @@ public abstract class ModDataContainer
 
         foreach (var property in GetProperties())
         {
+            // If property has no setter, skip it
+            if (property.GetSetMethod() == null) continue;
+
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
             if (ignoreAttribute != null)
