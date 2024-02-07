@@ -112,7 +112,6 @@ public abstract class ModDataContainer
 
     /// <summary>
     ///     Saves all properties in the container.
-    ///     TODO: Handle properties with null / private setters
     /// </summary>
     private void SaveProperties()
     {
@@ -214,7 +213,6 @@ public abstract class ModDataContainer
 
     /// <summary>
     ///     Loads all properties in the container.
-    ///     // TODO: Handle properties with null / private setters
     /// </summary>
     private void LoadProperties()
     {
