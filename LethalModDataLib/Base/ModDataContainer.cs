@@ -36,6 +36,8 @@ public abstract class ModDataContainer
         var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
                                     BindingFlags.Static);
 
+        fields = fields.Where(field => !ModDataHelper.IsKBackingField(field)).ToArray();
+
         return fields.ToList();
     }
 
