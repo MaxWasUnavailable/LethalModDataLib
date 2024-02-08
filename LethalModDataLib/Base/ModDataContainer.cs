@@ -106,7 +106,7 @@ public abstract class ModDataContainer
 
             var value = field.GetValue(this);
 
-            ModDataHandler.SaveData(value, prefix + field.Name, SaveLocation, false);
+            SaveLoadHandler.SaveData(value, prefix + field.Name, SaveLocation, false);
         }
     }
 
@@ -145,7 +145,7 @@ public abstract class ModDataContainer
 
             var value = property.GetValue(this);
 
-            ModDataHandler.SaveData(value, prefix + property.Name, SaveLocation, false);
+            SaveLoadHandler.SaveData(value, prefix + property.Name, SaveLocation, false);
         }
     }
 
@@ -204,7 +204,7 @@ public abstract class ModDataContainer
                 }
             }
 
-            var value = ModDataHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation,
+            var value = SaveLoadHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation,
                 autoAddGuid: false);
 
             field.SetValue(this, value);
@@ -244,7 +244,7 @@ public abstract class ModDataContainer
                 }
             }
 
-            var value = ModDataHandler.LoadData<object>(prefix + property.Name, saveLocation: SaveLocation,
+            var value = SaveLoadHandler.LoadData<object>(prefix + property.Name, saveLocation: SaveLocation,
                 autoAddGuid: false);
 
             property.SetValue(this, value);

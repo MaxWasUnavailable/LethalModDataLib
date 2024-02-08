@@ -37,7 +37,7 @@ public class LethalModDataLib : BaseUnityPlugin
     private static void VersionCheck()
     {
         // Load LethalModDataLib version from general mod data
-        var version = ModDataHandler.LoadData<string>(ModVersionKey, saveLocation: SaveLocation.GeneralSave);
+        var version = SaveLoadHandler.LoadData<string>(ModVersionKey, saveLocation: SaveLocation.GeneralSave);
 
         // Check if version is null
         if (string.IsNullOrEmpty(version))
@@ -56,7 +56,7 @@ public class LethalModDataLib : BaseUnityPlugin
             }
             else
             {
-                ModDataHandler.SaveData(ModVersionKey + "_old", version, SaveLocation.GeneralSave);
+                SaveLoadHandler.SaveData(ModVersionKey + "_old", version, SaveLocation.GeneralSave);
                 Logger?.LogWarning(
                     $"Mismatch between last saved LethalModDataLib version ({version})" +
                     $"and current version ({PluginInfo.PLUGIN_VERSION})." +
@@ -66,7 +66,7 @@ public class LethalModDataLib : BaseUnityPlugin
         }
 
         // Save LethalModDataLib version to general mod data
-        ModDataHandler.SaveData<string>(PluginInfo.PLUGIN_VERSION, ModVersionKey, SaveLocation.GeneralSave);
+        SaveLoadHandler.SaveData<string>(PluginInfo.PLUGIN_VERSION, ModVersionKey, SaveLocation.GeneralSave);
     }
 
     private static void OnGameInitialized()
