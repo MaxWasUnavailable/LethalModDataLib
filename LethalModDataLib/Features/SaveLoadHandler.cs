@@ -96,7 +96,14 @@ public static class SaveLoadHandler
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool LoadData(FieldInfo field, object? instance = null, string? keyPostfix = null)
     {
-        if (ModDataHandler.ModDataFields[field].BaseKey == null)
+        if (!ModDataHandler.ModDataFields.TryGetValue(field, out var modDataAttribute))
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no registered mod data attribute!");
+            return false;
+        }
+        
+        if (modDataAttribute.BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
                 $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
@@ -104,7 +111,7 @@ public static class SaveLoadHandler
         }
 
         var key = ModDataHandler.GetFieldKey(field, keyPostfix);
-        var saveLocation = ModDataHandler.ModDataFields[field].SaveLocation;
+        var saveLocation = modDataAttribute.SaveLocation;
 
         var value = LoadData<object>(key, saveLocation, autoAddGuid: false);
 
@@ -123,7 +130,14 @@ public static class SaveLoadHandler
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool LoadData(PropertyInfo property, object? instance = null, string? keyPostfix = null)
     {
-        if (ModDataHandler.ModDataProperties[property].BaseKey == null)
+        if (!ModDataHandler.ModDataProperties.TryGetValue(property, out var modDataAttribute))
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no registered mod data attribute!");
+            return false;
+        }
+        
+        if (modDataAttribute.BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
                 $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no base key!");
@@ -138,7 +152,7 @@ public static class SaveLoadHandler
         }
 
         var key = ModDataHandler.GetPropertyKey(property, keyPostfix);
-        var saveLocation = ModDataHandler.ModDataProperties[property].SaveLocation;
+        var saveLocation = modDataAttribute.SaveLocation;
 
         var value = LoadData<object>(key, saveLocation, autoAddGuid: false);
 
@@ -222,7 +236,14 @@ public static class SaveLoadHandler
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool SaveData(FieldInfo field, object? instance = null, string? keyPostfix = null)
     {
-        if (ModDataHandler.ModDataFields[field].BaseKey == null)
+        if (!ModDataHandler.ModDataFields.TryGetValue(field, out var modDataAttribute))
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no registered mod data attribute!");
+            return false;
+        }
+
+        if (modDataAttribute.BaseKey == null)
         {
             LethalModDataLib.Logger?.LogWarning(
                 $"Field {field.Name} from {field.DeclaringType?.AssemblyQualifiedName} has no base key!");
@@ -230,7 +251,7 @@ public static class SaveLoadHandler
         }
 
         var key = ModDataHandler.GetFieldKey(field, keyPostfix);
-        var saveLocation = ModDataHandler.ModDataFields[field].SaveLocation;
+        var saveLocation = modDataAttribute.SaveLocation;
 
         var value = field.GetValue(instance);
 
@@ -247,10 +268,17 @@ public static class SaveLoadHandler
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
     public static bool SaveData(PropertyInfo property, object? instance = null, string? keyPostfix = null)
     {
-        if (ModDataHandler.ModDataProperties[property].BaseKey == null)
+        if (!ModDataHandler.ModDataProperties.TryGetValue(property, out var modDataAttribute))
         {
             LethalModDataLib.Logger?.LogWarning(
-                $"Property {property.Name} from {property.DeclaringType?.FullName} has no base key!");
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no registered mod data attribute!");
+            return false;
+        }
+        
+        if (modDataAttribute.BaseKey == null)
+        {
+            LethalModDataLib.Logger?.LogWarning(
+                $"Property {property.Name} from {property.DeclaringType?.AssemblyQualifiedName} has no base key!");
             return false;
         }
 
@@ -262,7 +290,7 @@ public static class SaveLoadHandler
         }
 
         var key = ModDataHandler.GetPropertyKey(property, keyPostfix);
-        var saveLocation = ModDataHandler.ModDataProperties[property].SaveLocation;
+        var saveLocation = modDataAttribute.SaveLocation;
 
         var value = property.GetValue(instance);
 
