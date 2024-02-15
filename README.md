@@ -16,7 +16,25 @@ When saving and loading data through the library, keys are automatically generat
 information (depending on the approach used - see below). This ensures that your data does not conflict with other mods'
 data, and that it is easy to find and debug.
 
-## Supported types
+### File structure
+
+```
+ZeekerssRBLX
+    └── Lethal Company
+        ├── LCGeneralSaveData
+        ├── LCGeneralSaveData.moddata
+        ├── LCSaveFile1
+        ├── LCSaveFile1.moddata
+        ├── LCSaveFile2
+        ├── LCSaveFile2.moddata
+        ├── LCSaveFile3
+        └── LCSaveFile3.moddata
+```
+
+As you can see, there is a `.moddata` file for each vanilla save file, including the general save file. Mods do not
+have individual `.moddata` files, and do not touch the vanilla save files.
+
+### Supported types
 
 See [Easy Save 3's documentation](https://docs.moodkie.com/easy-save-3/es3-guides/es3-supported-types/) for a list of
 supported types. In general, most Unity types are supported, as well as custom classes and structs that are serializable.
