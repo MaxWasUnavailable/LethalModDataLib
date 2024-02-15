@@ -87,20 +87,26 @@ public abstract class ModDataContainer
         {
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = field.GetCustomAttribute<ModDataIgnoreAttribute>();
+
             if (ignoreAttribute != null)
             {
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnSave))
+                // If empty flags, always skip
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
+                    continue;
+                
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnSave))
                     continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfNull))
                     if (field.GetValue(this) == null)
                         continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfDefault))
                 {
                     var defaultValue = field.FieldType.IsValueType ? Activator.CreateInstance(field.FieldType) : null;
 
-                    if (field.GetValue(this).Equals(defaultValue)) continue;
+                    if (field.GetValue(this).Equals(defaultValue))
+                        continue;
                 }
             }
 
@@ -120,26 +126,33 @@ public abstract class ModDataContainer
         foreach (var property in GetProperties())
         {
             // If property has no getter, skip it
-            if (property.GetGetMethod() == null) continue;
+            if (property.GetGetMethod() == null)
+                continue;
 
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
+            
             if (ignoreAttribute != null)
             {
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnSave))
+                // If empty flags, always skip
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
+                    continue;
+                
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnSave))
                     continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfNull))
                     if (property.GetValue(this) == null)
                         continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfDefault))
                 {
                     var defaultValue = property.PropertyType.IsValueType
                         ? Activator.CreateInstance(property.PropertyType)
                         : null;
 
-                    if (property.GetValue(this).Equals(defaultValue)) continue;
+                    if (property.GetValue(this).Equals(defaultValue))
+                        continue;
                 }
             }
 
@@ -187,20 +200,26 @@ public abstract class ModDataContainer
         {
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = field.GetCustomAttribute<ModDataIgnoreAttribute>();
+            
             if (ignoreAttribute != null)
             {
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnLoad))
+                // If empty flags, always skip
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
+                    continue;
+                
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnLoad))
                     continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfNull))
                     if (field.GetValue(this) == null)
                         continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfDefault))
                 {
                     var defaultValue = field.FieldType.IsValueType ? Activator.CreateInstance(field.FieldType) : null;
 
-                    if (field.GetValue(this).Equals(defaultValue)) continue;
+                    if (field.GetValue(this).Equals(defaultValue))
+                        continue;
                 }
             }
 
@@ -221,26 +240,33 @@ public abstract class ModDataContainer
         foreach (var property in GetProperties())
         {
             // If property has no setter, skip it
-            if (property.GetSetMethod() == null) continue;
+            if (property.GetSetMethod() == null)
+                continue;
 
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
+            
             if (ignoreAttribute != null)
             {
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.OnLoad))
+                // If empty flags, always skip
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
+                    continue;
+                
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnLoad))
                     continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfNull))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfNull))
                     if (property.GetValue(this) == null)
                         continue;
 
-                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlag.IfDefault))
+                if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.IfDefault))
                 {
                     var defaultValue = property.PropertyType.IsValueType
                         ? Activator.CreateInstance(property.PropertyType)
                         : null;
 
-                    if (property.GetValue(this).Equals(defaultValue)) continue;
+                    if (property.GetValue(this).Equals(defaultValue))
+                        continue;
                 }
             }
 

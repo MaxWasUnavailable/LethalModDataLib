@@ -6,7 +6,7 @@ namespace LethalModDataLib.Enums;
 ///     Enum for flags for the IgnoreAttribute.
 /// </summary>
 [Flags]
-public enum IgnoreFlag
+public enum IgnoreFlags
 {
     /// <summary>
     ///     No flags. Completely ignore the field or property.
@@ -27,7 +27,7 @@ public enum IgnoreFlag
     ///     Ignore the field or property if it is null.
     /// </summary>
     IfNull = 4,
-    
+
     /// <summary>
     ///     Ignore the field or property if it is default.
     /// </summary>
