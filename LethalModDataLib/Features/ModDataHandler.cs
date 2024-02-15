@@ -22,7 +22,10 @@ public static class ModDataHandler
     /// <returns> The moddata key for the field. </returns>
     public static string GetFieldKey(FieldInfo field, string? keyPostfix = null)
     {
-        var key = ModDataFields[field].BaseKey + ".";
+        if (!ModDataFields.TryGetValue(field, out var modDataAttribute))
+            throw new ArgumentException("Field is not registered with the ModDataAttribute!");
+        
+        var key = modDataAttribute.BaseKey + ".";
 
         if (keyPostfix != null)
             return key + keyPostfix + "." + field.Name;
@@ -38,7 +41,10 @@ public static class ModDataHandler
     /// <returns> The moddata key for the property. </returns>
     public static string GetPropertyKey(PropertyInfo property, string? keyPostfix = null)
     {
-        var key = ModDataProperties[property].BaseKey + ".";
+        if (!ModDataProperties.TryGetValue(property, out var modDataAttribute))
+            throw new ArgumentException("Property is not registered with the ModDataAttribute!");
+        
+        var key = modDataAttribute.BaseKey + ".";
 
         if (keyPostfix != null)
             return key + keyPostfix + "." + property.Name;
