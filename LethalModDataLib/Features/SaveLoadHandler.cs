@@ -201,11 +201,12 @@ public static class SaveLoadHandler
         var key = ModDataHandler.GetModDataKey(modDataKey);
         var saveLocation = modDataValue.SaveLocation;
 
-        if (!modDataKey.TryGetValue(out var value))
-            LethalModDataLib.Logger?.LogDebug(
-                $"Failed to get value from field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}! Does it not have a getter?");
+        if (modDataKey.TryGetValue(out var value))
+            return SaveData(value, key, saveLocation, false);
 
-        return SaveData(value, key, saveLocation, false);
+        LethalModDataLib.Logger?.LogDebug(
+            $"Failed to get value from field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}! Does it not have a getter?");
+        return false;
     }
 
     #endregion
