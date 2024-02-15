@@ -16,6 +16,11 @@ When saving and loading data through the library, keys are automatically generat
 information (depending on the approach used - see below). This ensures that your data does not conflict with other mods'
 data, and that it is easy to find and debug.
 
+## Supported types
+
+See [Easy Save 3's documentation](https://docs.moodkie.com/easy-save-3/es3-guides/es3-supported-types/) for a list of
+supported types. In general, most Unity types are supported, as well as custom classes and structs that are serializable.
+
 ## Usage
 
 There are 3 ways to use this library. They can all be used in the same project, with some caveats.
