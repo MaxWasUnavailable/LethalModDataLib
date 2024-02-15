@@ -4,7 +4,7 @@
         <TargetFramework>net48</TargetFramework>
         <AssemblyName>MaxWasUnavailable.LethalModDataLib</AssemblyName>
         <Description>A library for Lethal Company, providing a standardised way to save and load modded data.</Description>
-        <Version>0.0.1</Version>
+        <Version>0.0.2</Version>
         <Authors>MaxWasUnavailable</Authors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
