@@ -33,7 +33,8 @@ public static class SaveLoadHandler
     /// <typeparam name="T"> Type of the data to load. </typeparam>
     /// <returns> The loaded data, or the default value if the data could not be loaded. </returns>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static T? LoadData<T>(string key, string fileName, T? defaultValue = default)
+    /// <remarks> This method is not recommended for use in most cases. Use the other overloads instead. </remarks>
+    private static T? LoadData<T>(string key, string fileName, T? defaultValue = default)
     {
         VerifyKeyAndFileName(key, fileName);
 
@@ -158,7 +159,8 @@ public static class SaveLoadHandler
     /// <typeparam name="T"> Type of the data to save. </typeparam>
     /// <returns> True if the data was saved successfully, false otherwise. </returns>
     /// <exception cref="ArgumentException"> Thrown if the key or file name is null or empty. </exception>
-    public static bool SaveData<T>(T? data, string key, string fileName)
+    /// <remarks> This method is not recommended for use in most cases. Use the other overloads instead. </remarks>
+    private static bool SaveData<T>(T? data, string key, string fileName)
     {
         VerifyKeyAndFileName(key, fileName);
 
