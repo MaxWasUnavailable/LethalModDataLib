@@ -37,7 +37,8 @@ have individual `.moddata` files, and do not touch the vanilla save files.
 ### Supported types
 
 See [Easy Save 3's documentation](https://docs.moodkie.com/easy-save-3/es3-guides/es3-supported-types/) for a list of
-supported types. In general, most Unity types are supported, as well as custom classes and structs that are serializable.
+supported types. In general, most Unity types are supported, as well as custom classes and structs that are
+serializable.
 
 ## Usage
 
@@ -74,9 +75,10 @@ These are options for its 4 parameters:
     - `CurrentSave` - In a .moddata file that is specific to the current save file
 - `BaseKey` - **Strongly recommended to leave default unless you know what you're doing** - The base key for the data.
   This is used to create the key for the field in the .moddata file. If not set, the library will sort this out. In
-  general, you should not need to set this unless you are e.g. trying to access the data from another mod (in which
-  case, you should probably be using the `GetFieldInfo` method in `ModDataHelper` instead, since duplicate attribute
-  keys can cause issues).
+  general, you should not need to set this unless you are e.g. trying to access the data from another mod which is not
+  enabled. Note that using the same base key for multiple fields will very likely cause unexpected behaviour. (If you
+  do want to use the same key as a currently enabled mod, for some case I can't imagine, you should be using the
+  `GetIModDataKey` method in `ModDataHelper` to fetch its information).
 
 > Example usage:
 
@@ -87,7 +89,7 @@ public class SomeClass
     private int __someInt;
     
     [ModData(SaveWhen.OnAutoSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-    private string __someString;
+    public string SomeString { get; set; } = "SomeDefaultValue";
     
     [ModData(SaveWhen.Manual, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
     private float __someFloat;
@@ -97,27 +99,35 @@ public class SomeClass
     {
         // (...)
         
-        ModDataHandler.SaveData(GetFieldInfo(this, nameof(__someFloat)));
+        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
+        
+        // Note that we can also force a save or load of automated fields/properties:
+        
+        SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(SomeString)));
+        
+        // This might be useful to instantiate values for instances that don't exist when the OnLoad event is called.
         
         // (...)
     }
 }
 ```
 
-The ModData attribute can be used on fields, both static and instanced ones, as well as public, private and internal
-ones.
+The ModData attribute can be used on fields and properties, both static and instanced ones, as well as public, private
+and internal ones.
 
 > [!WARNING]
 >
-> When using the Manual parameter for saving and/or loading, you **need** to use the methods that take FieldInfo as a
-> parameter. This is because the other save/load methods will result in a different key being used, which will cause
-> your data to be saved and loaded in a different location.
+> When using the Manual parameter for saving and/or loading, you **need** to use the methods that take an IModDataKey as
+> parameter. This is because the other save/load methods will result in a different key being used (unless you go
+> through the unnecessary trouble of finding out the key yourself). Not doing this will cause your data to be saved and
+> loaded in a different location, unless you're handling it manually entirely - in which case you don't need the
+> attribute in the first place.
 
 ### 2. Using the `ModDataContainer` abstract class
 
-This way of using the library requires you to set up a class that inherits from `ModDataContainer`. Any fields in this
-class will be saved and loaded automatically, without the need for any attributes. You are essentially creating a
-"container" for your mod data.
+This way of using the library requires you to set up a class that inherits from `ModDataContainer`. Any fields or
+properties in this class will be saved and loaded automatically, without the need for any attributes. You are
+essentially creating a "container" for your mod data.
 
 The ModDataContainer class has a number of properties and methods that you can override to customize its behavior:
 
@@ -136,8 +146,21 @@ The ModDataContainer class has a number of properties and methods that you can o
     - `Load` - **Strongly recommended to leave default unless you know what you're doing** - Loads the data in the
       container. Should be called by the modder when the data should be loaded.
     - Pre/PostSave/Load - Methods that are called before and after the saving and loading of the container's data. Can
-      be
-      used to perform additional operations, such as logging or data validation.
+      be used to perform additional operations, such as logging or data validation.
+
+There is also an additional attribute that can be used to mark fields or properties as ignored by the container:
+
+```csharp
+public ModDataIgnoreAttribute(IgnoreFlags ignoreFlags = IgnoreFlags.None)
+```
+
+The `IgnoreFlags` enum has the following options:
+
+- `None` - No flags. Completely ignore the field or property.
+- `OnSave` - Ignore the field or property when saving.
+- `OnLoad` - Ignore the field or property when loading.
+- `IfNull` - Ignore the field or property if it is null.
+- `IfDefault` - Ignore the field or property if it is the default value for its type.
 
 > Example usage:
 
@@ -145,7 +168,8 @@ The ModDataContainer class has a number of properties and methods that you can o
 public class SomeContainer : ModDataContainer
 {
     private int __someInt;
-    private string __someString;
+    public string SomeString { get; set; } = "SomeDefaultValue";
+    [ModDataIgnore(IgnoreFlags.IfDefault)]
     private float __someFloat;
     private List<int> __someList;
     
@@ -190,44 +214,40 @@ public class SomeClass
 
 > [!WARNING]
 >
-> Note: You should **not** use the ModData attribute on fields in a class that inherits from ModDataContainer. This will
-> cause the fields to be saved/loaded twice, once by the container and once by the attribute. Additionally, the keys for
-> the fields will be different, which can cause inconsistencies depending on when the data is saved and loaded.
+> Note: You should **not** use the ModData attribute on (static) fields or properties in a class that inherits from
+> ModDataContainer. This will cause the fields to be saved/loaded twice, once by the container and once by the
+> attribute. Additionally, the keys for the fields will be different, which can cause inconsistencies depending on when
+> the data is saved and loaded. When used on non-static fields or properties, the attribute will be ignored unless you
+> register the class' instance with the ModDataHandler, which is also not recommended for the same reasons.
 
-### 3. Using the `ModDataHandler` save & load methods
+### 3. Using the `SaveLoadHandler` save & load methods
 
-This is the "good old" manual way of saving and loading data. You can use the `ModDataHandler` class' methods to
+This is the "good old" manual way of saving and loading data. You can use the `SaveLoadHandler` class' methods to
 manually handle saving and loading of data. This is useful if you need to save and load data in a way / at a time that
 is not covered by the other options, or if you want to build your own handler for saving and loading.
 
-The `ModDataHandler` class has a SaveData & LoadData method, with three public signatures each:
+The `SaveLoadHandler` class has a SaveData & LoadData method, with two public signatures each:
 
 ```csharp
-// Primarily for internal use by the handler, not recommended for use by modders. Only exposed in case you *really* need it.
-public static bool SaveData<T>(T? data, string key, string fileName)
-
 // The recommended method to use for manual saving.
 // It is recommended to leave autoAddGuid as true, since this will automatically add your mod's guid to the key; preventing conflicts with other mods.
 public static bool SaveData<T>(T? data, string key, SaveLocation saveLocation = SaveLocation.CurrentSave, bool autoAddGuid = true)
     
-// For usage with the SaveWhen.Manual attribute parameter. You will need to fetch the FieldInfo for the field you want to save.
-// This can be done using the GetFieldInfo method in ModDataHelper.
-// Note: This will save the data from the field, rather than requiring you to pass it through the method.
-public static bool SaveData(FieldInfo field)
+// For usage with the SaveWhen.Manual attribute parameter. You will need to fetch the IModDataKey object for the field or property you want to save.
+// This can be done using the GetIModDataKey method in ModDataHelper.
+// Note: This will save the data from the field/property, rather than requiring you to pass a value through the method.
+public static bool SaveData(IModDataKey modDataKey)
 ```
 
 ```csharp
-// Primarily for internal use by the handler, not recommended for use by modders. Only exposed in case you *really* need it.
-public static T? LoadData<T>(string key, string fileName, T? defaultValue = default)
-    
 // The recommended method to use for manual loading.
 // It is recommended to leave autoAddGuid as true, since this will automatically add your mod's guid to the key; preventing conflicts with other mods.
 public static T? LoadData<T>(string key, T? defaultValue = default, SaveLocation saveLocation = SaveLocation.CurrentSave, bool autoAddGuid = true)
     
-// For usage with the LoadWhen.Manual attribute parameter. You will need to fetch the FieldInfo for the field you want to load.
-// This can be done using the GetFieldInfo method in ModDataHelper.
-// Note: This will store the loaded data in the field, rather than returning it through the method.
-public static bool LoadData(FieldInfo field)
+// For usage with the LoadWhen.Manual attribute parameter. You will need to fetch the IModDataKey object for the field or property you want to load.
+// This can be done using the GetIModDataKey method in ModDataHelper.
+// Note: This will load the data into the field/property, rather than requiring you to assign the value returned by the method.
+public static bool LoadData(IModDataKey modDataKey)
 ```
 
 > Example usage:
@@ -236,7 +256,7 @@ public static bool LoadData(FieldInfo field)
 public class SomeClass
 {
     private int __someInt;
-    private string __someString;
+    private string SomeString { get; set; };
     
     [ModData(SaveWhen.Manual, LoadWhen.Manual, SaveLocation.GeneralSave)]
     private float __someFloat;
@@ -246,7 +266,7 @@ public class SomeClass
     {
         // (...)
         
-        ModDataHandler.SaveData(__someInt, "SomeIntKey");
+        SaveLoadHandler.SaveData(__someInt, "SomeIntKey");
         
         // (...)
     }
@@ -256,7 +276,7 @@ public class SomeClass
     {
         // (...)
         
-        __someString = ModDataHandler.LoadData<string>("SomeStringKey", "SomeDefaultValue");
+        SomeString = SaveLoadHandler.LoadData<string>("SomeStringKey", "SomeDefaultValue");
         
         // (...)
     }
@@ -266,7 +286,7 @@ public class SomeClass
     {
         // (...)
         
-        ModDataHandler.SaveData(GetFieldInfo(this, nameof(__someFloat)));
+        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
         
         // (...)
     }
@@ -276,7 +296,7 @@ public class SomeClass
     {
         // (...)
         
-        ModDataHandler.LoadData(GetFieldInfo(this, nameof(__someFloat)));
+        SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
         
         // (...)
     }
@@ -289,10 +309,9 @@ public class SomeClass
   mod. (e.g. by hooking into the `PostDeleteFileEvent` event from `LethalEventsLib`)
 - Validate your data after loading, if you expect it to be in a certain state. If a value is missing when it is loaded,
   it will be set to the type's `default` value (0, null, etc...). This can be done in e.g. the `PostLoad` method of a
-  `ModDataContainer` or in the method that loads the data. For attribute-based saving and loading, you may be able to
-  use the `PostLoadGameEvent` event from `LethalEventsLib` to validate the data after it has been loaded (assuming you
-  subscribe to the event *after* the library's event handler has been subscribed).
+  `ModDataContainer` or in the method that loads the data. For attribute-based saving and loading, it is recommended to
+  use properties, and to validate the value in the property's setter.
 - Lethal Company sets its current save file to the last selected/loaded save file on game start. Keep this in mind
   if you are using the `SaveLocation.CurrentSave` parameter, and are manually handling saving and/or loading. This is
-  not a concern if you are using the attribute without manual handling, or if you are using
-  the `SaveLocation.GeneralSave` parameter.
+  not a concern if you are using the attribute without manual handling, if you are using the `SaveLocation.GeneralSave`
+  parameter, or if you are saving/loading *after* a save file has been loaded.
