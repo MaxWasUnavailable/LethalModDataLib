@@ -23,7 +23,7 @@ public static class ModDataHandler
     public static string GetFieldKey(FieldInfo field, string? keyPostfix = null)
     {
         if (!ModDataFields.TryGetValue(field, out var modDataAttribute))
-            throw new ArgumentException("Field is not registered with the ModDataAttribute!");
+            throw new ArgumentException($"Field {field.Name} is not registered with the ModDataAttribute!");
         
         var key = modDataAttribute.BaseKey + ".";
 
@@ -42,7 +42,7 @@ public static class ModDataHandler
     public static string GetPropertyKey(PropertyInfo property, string? keyPostfix = null)
     {
         if (!ModDataProperties.TryGetValue(property, out var modDataAttribute))
-            throw new ArgumentException("Property is not registered with the ModDataAttribute!");
+            throw new ArgumentException($"Property {property.Name} is not registered with the ModDataAttribute!");
         
         var key = modDataAttribute.BaseKey + ".";
 
