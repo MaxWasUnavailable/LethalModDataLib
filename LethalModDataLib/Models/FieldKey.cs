@@ -10,7 +10,6 @@ namespace LethalModDataLib.Models;
 public record FieldKey(FieldInfo FieldInfo, object? Instance = null) : IModDataKey
 {
     public string Name => FieldInfo.Name;
-    public string? FullName => FieldInfo.FieldType.FullName;
     public string? AssemblyQualifiedName => FieldInfo.FieldType.AssemblyQualifiedName;
 
     public bool TryGetValue(out object? value)

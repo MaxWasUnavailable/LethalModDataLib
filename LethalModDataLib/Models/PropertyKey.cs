@@ -10,7 +10,6 @@ namespace LethalModDataLib.Models;
 public record PropertyKey(PropertyInfo PropertyInfo, object? Instance = null) : IModDataKey
 {
     public string Name => PropertyInfo.Name;
-    public string? FullName => PropertyInfo.DeclaringType?.FullName;
     public string? AssemblyQualifiedName => PropertyInfo.PropertyType.AssemblyQualifiedName;
 
     public bool TryGetValue(out object? value)
