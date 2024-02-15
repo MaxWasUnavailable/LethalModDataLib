@@ -6,7 +6,7 @@ using LethalModDataLib.Features;
 
 namespace LethalModDataLib;
 
-[BepInDependency(LethalEventsLib.PluginInfo.PLUGIN_GUID)]
+[BepInDependency(LethalEventsLib.PluginInfo.PLUGIN_GUID, LethalEventsLib.PluginInfo.PLUGIN_VERSION)]
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class LethalModDataLib : BaseUnityPlugin
 {
