@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using LethalEventsLib.Events;
 using LethalModDataLib.Enums;
+using LethalModDataLib.Helpers;
 using LethalModDataLib.Interfaces;
 using LethalModDataLib.Models;
 

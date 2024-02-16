@@ -6,7 +6,7 @@ using BepInEx.Bootstrap;
 using LethalModDataLib.Interfaces;
 using LethalModDataLib.Models;
 
-namespace LethalModDataLib.Features;
+namespace LethalModDataLib.Helpers;
 
 public static class ModDataHelper
 {

@@ -5,6 +5,7 @@ using System.Reflection;
 using LethalModDataLib.Attributes;
 using LethalModDataLib.Enums;
 using LethalModDataLib.Features;
+using LethalModDataLib.Helpers;
 
 namespace LethalModDataLib.Base;
 
@@ -93,7 +94,7 @@ public abstract class ModDataContainer
                 // If empty flags, always skip
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
                     continue;
-                
+
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnSave))
                     continue;
 
@@ -131,13 +132,13 @@ public abstract class ModDataContainer
 
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
-            
+
             if (ignoreAttribute != null)
             {
                 // If empty flags, always skip
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
                     continue;
-                
+
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnSave))
                     continue;
 
@@ -200,13 +201,13 @@ public abstract class ModDataContainer
         {
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = field.GetCustomAttribute<ModDataIgnoreAttribute>();
-            
+
             if (ignoreAttribute != null)
             {
                 // If empty flags, always skip
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
                     continue;
-                
+
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnLoad))
                     continue;
 
@@ -245,13 +246,13 @@ public abstract class ModDataContainer
 
             // If has IgnoreAttribute, check if it should be ignored
             var ignoreAttribute = property.GetCustomAttribute<ModDataIgnoreAttribute>();
-            
+
             if (ignoreAttribute != null)
             {
                 // If empty flags, always skip
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.None))
                     continue;
-                
+
                 if (ignoreAttribute.IgnoreFlags.HasFlag(IgnoreFlags.OnLoad))
                     continue;
 
