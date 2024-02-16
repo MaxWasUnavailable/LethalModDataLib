@@ -22,11 +22,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The API now supports properties across the board
 - ModDataAttributes can now be used on non-static fields/properties, provided the class using them is instantiated, and
   registered with the ModDataHandler via `ModDataHandler.RegisterInstance(object instance, string keySuffix = "")`
+- De-registration methods for ModData. Can be manually called via `ModDataHandler.DeRegisterInstance(object instance)`
+- Warning when a ModDataAttribute is used on a non-static field/property, but the class is not registered with the
+  ModDataHandler, and a manual save/load is attempted using the IModDataKey
 
 ### Fixed
 
 - Fixed a bug where fields/properties in a ModDataContainer flagged with the ModDataIgnoreAttribute with no IgnoreFlags
   would not be ignored
+- Fixed private fields/properties not being accessible by the API
 
 ### Changed
 
@@ -42,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   dictionaries. It also has a ModDataValue as the value type, rather than the ModDataAttribute. This allows me to
   store the relevant information in a unified way (e.g. instance can be null for static fields/properties, or an
   instance for non-static fields/properties)
+- Use current value for field or property instead of default type value when loading non-existing data (this should
+  prevent issues with default values being replaced with the default type value)
 
 ## [0.0.1] - 04/02/2024
 
