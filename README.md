@@ -53,8 +53,13 @@ so you are not limited to the automated part.
 Depending on the attribute configuration, the library will take care of saving and loading data for you, in a way that
 is seamless and "invisible" / does not require you to add any additional code beyond the attribute.
 
-The `ModData` attribute can be used to mark fields that should be saved and loaded through the handler's event hooks.
-This is its constructor signature:
+The `ModData` attribute can be used to mark fields & properties that should be saved and loaded through the handler's
+event hooks. When applied to **static** fields or properties, the attribute will automatically register the class with
+the ModDataHandler, and the data will be saved and loaded depending on the attribute's parameters. When applied to
+**non-static** fields or properties, the attribute will be ignored unless you register the class' instance with the
+ModDataHandler through the `RegisterInstance` method.
+
+This is the attribute's constructor signature:
 
 ```csharp
 public ModDataAttribute(SaveWhen saveWhen, LoadWhen loadWhen, SaveLocation saveLocation, string? baseKey = null)
@@ -80,6 +85,19 @@ These are options for its 4 parameters:
   do want to use the same key as a currently enabled mod, for some case I can't imagine, you should be using the
   `GetIModDataKey` method in `ModDataHelper` to fetch its information).
 
+> [!IMPORTANT]
+>
+> To manually trigger saving & loading of an attribute-marked field or property, you can use the `SaveLoadHandler`
+> class' `SaveData` and `LoadData` methods, using an `IModDataKey` object. This can be fetched using the
+> `GetIModDataKey` method in `ModDataHelper`.
+
+> [!TIP]
+>
+> Remember that non-static fields and properties with the ModData attribute will be ignored unless you register the
+> class' instance with the ModDataHandler through the `RegisterInstance` method.
+
+> [!NOTE]
+>
 > Example usage:
 
 ```csharp
