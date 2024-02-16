@@ -51,6 +51,7 @@ public static class ModDataHandler
     /// <remarks> This needs to be called on any class that uses the ModDataAttribute on non-static fields or properties. </remarks>
     public static void RegisterInstance(object instance, string? keySuffix = null)
     {
+        LethalModDataLib.Logger?.LogDebug($"Registering instance {instance.GetType().FullName}...");
         var guid = ModDataHelper.GetCallingPluginGuid(Assembly.GetCallingAssembly());
 
         ModDataAttributeCollector.RegisterModDataAttributes(guid, instance.GetType(), instance, keySuffix);
@@ -62,6 +63,7 @@ public static class ModDataHandler
     /// <param name="instance"> Instance of the class to de-register. </param>
     public static void DeRegisterInstance(object instance)
     {
+        LethalModDataLib.Logger?.LogDebug($"De-registering instance {instance.GetType().FullName}...");
         ModDataAttributeCollector.DeRegisterModDataAttributes(instance);
     }
 
