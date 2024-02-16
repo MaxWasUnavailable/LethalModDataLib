@@ -96,9 +96,9 @@ These are options for its 4 parameters:
 > Remember that non-static fields and properties with the ModData attribute will be ignored unless you register the
 > class' instance with the ModDataHandler through the `RegisterInstance` method.
 
-> [!NOTE]
+> [!TIP]
 >
-> Example usage:
+> Example instanced usage:
 
 ```csharp
 public class SomeClass
@@ -120,18 +120,59 @@ public class SomeClass
         SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
         
         // Note that we can also force a save or load of automated fields/properties:
-        
         SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(SomeString)));
         
-        // This might be useful to instantiate values for instances that don't exist when the OnLoad event is called.
+        // This might be useful to instantiate values for instances that may be null when the OnLoad event is called.
+        if (string.IsNullOrEmpty(SomeString))
+        {
+            // (...)
+        }
         
         // (...)
+    }
+}
+
+// In some other class
+public class SomeOtherClass
+{
+    private SomeClass __someClass;
+    
+    public SomeOtherClass()
+    {
+        __someClass = new SomeClass();
+        
+        ModDataHandler.RegisterInstance(someClass); // Register an instance of SomeClass with the ModDataHandler
     }
 }
 ```
 
 The ModData attribute can be used on fields and properties, both static and instanced ones, as well as public, private
 and internal ones.
+
+> [!TIP]
+>
+> Example static usage:
+
+```csharp
+public class SomeClass
+{
+    [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
+    private static int __someInt;
+    
+    [ModData(SaveWhen.OnAutoSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+    public static string SomeString { get; set; } = "SomeDefaultValue";
+    
+    public void SomeMethod()
+    {
+        // (...)
+        
+        // Note: considering the attribute isn't set to manual, you don't *need* to manually call a save or load.
+        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(this), nameof(__someInt))); // Note the use of typeof(this) instead of this
+        
+        // (...)
+    }
+}
+```
 
 > [!WARNING]
 >
