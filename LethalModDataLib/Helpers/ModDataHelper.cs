@@ -17,32 +17,50 @@ public static class ModDataHelper
     ///     Used to manually handle saving and/or loading of an attributed field or property.
     ///     If the object isn't an instance, the field or property must be static.
     /// </summary>
-    /// <param name="obj"> Object to get the field info from. </param>
-    /// <param name="fieldName"> Name of the field to get the field info for. </param>
-    /// <returns> The field info for the field. </returns>
-    /// <remarks> It is recommended to use nameof() to get the field name. </remarks>
-    public static IModDataKey? GetIModDataKey(object obj, string fieldName)
+    /// <param name="instanceOrType"> Instance or type (in case of static) of a class to get the field/property info for. </param>
+    /// <param name="fieldPropertyName"> Name of the field or property to get the info for. </param>
+    /// <returns> An IModDataKey object for the field or property. </returns>
+    /// <remarks> It is recommended to use nameof() to get the field or property name. </remarks>
+    public static IModDataKey? GetIModDataKey(object instanceOrType, string fieldPropertyName)
     {
-        // Check if object is an instance
         object? instance = null;
-        if (obj.GetType().IsInstanceOfType(obj))
-            instance = obj;
+        Type type;
+
+        if (instanceOrType is Type typeInstance)
+        {
+            type = typeInstance;
+        }
+        else
+        {
+            instance = instanceOrType;
+            type = instanceOrType.GetType();
+        }
 
         // Check if field with the given name exists
-        var fieldInfo = obj.GetType()
-            .GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var fieldInfo = type
+            .GetField(fieldPropertyName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
         if (fieldInfo != null)
+        {
+            if (fieldInfo.IsStatic)
+                instance = null;
             return new FieldKey(fieldInfo, instance);
+        }
 
         // Else, check if property with the given name exists
-        var propertyInfo = obj.GetType()
-            .GetProperty(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var propertyInfo = type
+            .GetProperty(fieldPropertyName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
         if (propertyInfo != null)
+        {
+            if (propertyInfo.GetGetMethod(true).IsStatic)
+                instance = null;
             return new PropertyKey(propertyInfo, instance);
+        }
 
-        throw new ArgumentException($"Field or property {fieldName} does not exist in {obj.GetType().FullName}!");
+        throw new ArgumentException($"Field or property {fieldPropertyName} does not exist in {type.FullName}!");
     }
 
     /// <summary>
