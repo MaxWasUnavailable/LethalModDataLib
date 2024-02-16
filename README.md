@@ -160,18 +160,33 @@ public class SomeClass
     [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
     private static int __someInt;
     
-    [ModData(SaveWhen.OnAutoSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+    [ModData(SaveWhen.Manual, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
     public static string SomeString { get; set; } = "SomeDefaultValue";
     
     public void SomeMethod()
     {
         // (...)
         
-        // Note: considering the attribute isn't set to manual, you don't *need* to manually call a save or load.
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(this), nameof(__someInt))); // Note the use of typeof(this) instead of this
+        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(this), nameof(SomeString))); // Note the use of typeof(this) instead of this
         
         // (...)
     }
+}
+
+public class SomeOtherClass
+{
+    // (...)
+    
+    public void SomeOtherMethod()
+    {
+        // (...)
+        
+        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(SomeClass), nameof(SomeClass.SomeString))); // Note the use of typeof(SomeClass)
+        
+        // (...)
+    }
+    
+    // (...)
 }
 ```
 
