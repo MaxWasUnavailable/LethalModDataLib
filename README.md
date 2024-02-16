@@ -94,57 +94,58 @@ These are options for its 4 parameters:
 > [!TIP]
 >
 > Remember that non-static fields and properties with the ModData attribute will be ignored unless you register the
-> class' instance with the ModDataHandler through the `RegisterInstance` method.
+> class' instance with the ModDataHandler through the `RegisterInstance` method. De-registering an instance is done
+> through the `DeRegisterInstance` method.
 
 > [!TIP]
 >
 > Example instanced usage:
-
-```csharp
-public class SomeClass
-{
-    [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
-    private int __someInt;
-    
-    [ModData(SaveWhen.OnAutoSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-    public string SomeString { get; set; } = "SomeDefaultValue";
-    
-    [ModData(SaveWhen.Manual, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
-    private float __someFloat;
-    
-    // Some method in which we manually handle __someFloat's saving, since its attribute is set to SaveWhen.Manual
-    private void SomeMethod()
-    {
-        // (...)
-        
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
-        
-        // Note that we can also force a save or load of automated fields/properties:
-        SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(SomeString)));
-        
-        // This might be useful to instantiate values for instances that may be null when the OnLoad event is called.
-        if (string.IsNullOrEmpty(SomeString))
-        {
-            // (...)
-        }
-        
-        // (...)
-    }
-}
-
-// In some other class
-public class SomeOtherClass
-{
-    private SomeClass __someClass;
-    
-    public SomeOtherClass()
-    {
-        __someClass = new SomeClass();
-        
-        ModDataHandler.RegisterInstance(someClass); // Register an instance of SomeClass with the ModDataHandler
-    }
-}
-```
+>
+> ```csharp
+> public class SomeClass
+> {
+>     [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
+>     private int __someInt;
+>     
+>     [ModData(SaveWhen.OnAutoSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+>     public string SomeString { get; set; } = "SomeDefaultValue";
+>     
+>     [ModData(SaveWhen.Manual, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
+>     private float __someFloat;
+>     
+>     // Some method in which we manually handle __someFloat's saving, since its attribute is set to SaveWhen.Manual
+>     private void SomeMethod()
+>     {
+>         // (...)
+>         
+>         SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
+>         
+>         // Note that we can also force a save or load of automated fields/properties:
+>         SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(SomeString)));
+>         
+>         // This might be useful to instantiate values for instances that may be null when the OnLoad event is called.
+>         if (string.IsNullOrEmpty(SomeString))
+>         {
+>             // (...)
+>         }
+>         
+>         // (...)
+>     }
+> }
+> 
+> // In some other class
+> public class SomeOtherClass
+> {
+>     private SomeClass __someClass;
+>     
+>     public SomeOtherClass()
+>     {
+>         __someClass = new SomeClass();
+>         
+>         ModDataHandler.RegisterInstance(someClass, "someInstanceName"); // Register an instance of SomeClass with the ModDataHandler
+>     }
+> }
+> ```
 
 The ModData attribute can be used on fields and properties, both static and instanced ones, as well as public, private
 and internal ones.
@@ -152,27 +153,27 @@ and internal ones.
 > [!TIP]
 >
 > Example static usage:
-
-```csharp
-public class SomeClass
-{
-    [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
-    private static int __someInt;
-    
-    [ModData(SaveWhen.OnAutoSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-    public static string SomeString { get; set; } = "SomeDefaultValue";
-    
-    public void SomeMethod()
-    {
-        // (...)
-        
-        // Note: considering the attribute isn't set to manual, you don't *need* to manually call a save or load.
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(this), nameof(__someInt))); // Note the use of typeof(this) instead of this
-        
-        // (...)
-    }
-}
-```
+>
+> ```csharp
+> public class SomeClass
+> {
+>     [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.GeneralSave)]
+>     private static int __someInt;
+>     
+>     [ModData(SaveWhen.OnAutoSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+>     public static string SomeString { get; set; } = "SomeDefaultValue";
+>     
+>     public void SomeMethod()
+>     {
+>         // (...)
+>         
+>         // Note: considering the attribute isn't set to manual, you don't *need* to manually call a save or load.
+>         SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(this), nameof(__someInt))); // Note the use of typeof(this) instead of this
+>         
+>         // (...)
+>     }
+> }
+> ```
 
 > [!WARNING]
 >
@@ -221,55 +222,57 @@ The `IgnoreFlags` enum has the following options:
 - `IfNull` - Ignore the field or property if it is null.
 - `IfDefault` - Ignore the field or property if it is the default value for its type.
 
+> [!TIP]
+>
 > Example usage:
-
-```csharp
-public class SomeContainer : ModDataContainer
-{
-    private int __someInt;
-    public string SomeString { get; set; } = "SomeDefaultValue";
-    [ModDataIgnore(IgnoreFlags.IfDefault)]
-    private float __someFloat;
-    private List<int> __someList;
-    
-    // Use the constructor to set the OptionalPrefixSuffix, so we can have multiple instances of this container without them overwriting each other
-    public SomeContainer(string name)
-    {
-        OptionalPrefixSuffix = name;
-    }
-    
-    // Override the PostLoad method to ensure that the list is not null
-    protected override void PostLoad()
-    {
-        if (__someList == null)
-        {
-            __someList = new List<int>();
-        }
-    }
-}
-
-// In some other class
-public class SomeClass
-{
-    private SomeContainer __container;
-    
-    public SomeClass()
-    {
-        __container = new SomeContainer("SomeName"); // Create a new instance of the container
-        __container.Load(); // Load the container's data, if any exists
-    }
-    
-    // Some method in which we manually handle saving the container's data
-    private void SomeMethod()
-    {
-        // (...)
-        
-        __container.Save(); // Save the container's data
-        
-        // (...)
-    }
-}
-```
+>
+> ```csharp
+> public class SomeContainer : ModDataContainer
+> {
+>     private int __someInt;
+>     public string SomeString { get; set; } = "SomeDefaultValue";
+>     [ModDataIgnore(IgnoreFlags.IfDefault)]
+>     private float __someFloat;
+>     private List<int> __someList;
+>     
+>     // Use the constructor to set the OptionalPrefixSuffix, so we can have multiple instances of this container without them overwriting each other
+>     public SomeContainer(string name)
+>     {
+>         OptionalPrefixSuffix = name;
+>     }
+>     
+>     // Override the PostLoad method to ensure that the list is not null
+>     protected override void PostLoad()
+>     {
+>         if (__someList == null)
+>         {
+>             __someList = new List<int>();
+>         }
+>     }
+> }
+> 
+> // In some other class
+> public class SomeClass
+> {
+>     private SomeContainer __container;
+>     
+>     public SomeClass()
+>     {
+>         __container = new SomeContainer("SomeName"); // Create a new instance of the container
+>         __container.Load(); // Load the container's data, if any exists
+>     }
+>     
+>     // Some method in which we manually handle saving the container's data
+>     private void SomeMethod()
+>     {
+>         // (...)
+>         
+>         __container.Save(); // Save the container's data
+>         
+>         // (...)
+>     }
+> }
+> ```
 
 > [!WARNING]
 >
@@ -309,58 +312,60 @@ public static T? LoadData<T>(string key, T? defaultValue = default, SaveLocation
 public static bool LoadData(IModDataKey modDataKey)
 ```
 
+> [!TIP]
+>
 > Example usage:
-
-```csharp
-public class SomeClass
-{
-    private int __someInt;
-    private string SomeString { get; set; };
-    
-    [ModData(SaveWhen.Manual, LoadWhen.Manual, SaveLocation.GeneralSave)]
-    private float __someFloat;
-    
-    // Some method in which we manually handle saving __someInt
-    private void SomeMethod()
-    {
-        // (...)
-        
-        SaveLoadHandler.SaveData(__someInt, "SomeIntKey");
-        
-        // (...)
-    }
-    
-    // Some method in which we manually handle loading __someString
-    private void SomeOtherMethod()
-    {
-        // (...)
-        
-        SomeString = SaveLoadHandler.LoadData<string>("SomeStringKey", "SomeDefaultValue");
-        
-        // (...)
-    }
-    
-    // Some method in which we manually handle saving __someFloat
-    private void YetAnotherMethod()
-    {
-        // (...)
-        
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
-        
-        // (...)
-    }
-    
-    // Some method in which we manually handle loading __someFloat
-    private void AndAnotherMethod()
-    {
-        // (...)
-        
-        SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
-        
-        // (...)
-    }
-}
-```
+>
+> ```csharp
+> public class SomeClass
+> {
+>     private int __someInt;
+>     private string SomeString { get; set; };
+>     
+>     [ModData(SaveWhen.Manual, LoadWhen.Manual, SaveLocation.GeneralSave)]
+>     private float __someFloat;
+>     
+>     // Some method in which we manually handle saving __someInt
+>     private void SomeMethod()
+>     {
+>         // (...)
+>         
+>         SaveLoadHandler.SaveData(__someInt, "SomeIntKey");
+>         
+>         // (...)
+>     }
+>     
+>     // Some method in which we manually handle loading __someString
+>     private void SomeOtherMethod()
+>     {
+>         // (...)
+>         
+>         SomeString = SaveLoadHandler.LoadData<string>("SomeStringKey", "SomeDefaultValue");
+>         
+>         // (...)
+>     }
+>     
+>     // Some method in which we manually handle saving __someFloat
+>     private void YetAnotherMethod()
+>     {
+>         // (...)
+>         
+>         SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
+>         
+>         // (...)
+>     }
+>     
+>     // Some method in which we manually handle loading __someFloat
+>     private void AndAnotherMethod()
+>     {
+>         // (...)
+>         
+>         SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
+>         
+>         // (...)
+>     }
+> }
+> ```
 
 ## Tips
 
