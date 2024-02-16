@@ -14,7 +14,7 @@ public record PropertyKey(PropertyInfo PropertyInfo, object? Instance = null) : 
 
     public bool TryGetValue(out object? value)
     {
-        if (PropertyInfo.GetGetMethod() == null)
+        if (PropertyInfo.GetGetMethod(true) == null)
         {
             value = null;
             return false;
@@ -26,7 +26,7 @@ public record PropertyKey(PropertyInfo PropertyInfo, object? Instance = null) : 
 
     public bool TrySetValue(object? value)
     {
-        if (PropertyInfo.GetSetMethod() == null)
+        if (PropertyInfo.GetSetMethod(true) == null)
             return false;
 
         PropertyInfo.SetValue(Instance, value);
