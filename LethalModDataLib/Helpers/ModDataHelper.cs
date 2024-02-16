@@ -68,7 +68,7 @@ public static class ModDataHelper
     /// </summary>
     /// <returns> The current save file name. </returns>
     /// <remarks> When used too early, this will return the last save file used by the player. </remarks>
-    public static string GetCurrentSaveFileName()
+    internal static string GetCurrentSaveFileName()
     {
         return GameNetworkManager.Instance.currentSaveFileName;
     }
@@ -77,7 +77,7 @@ public static class ModDataHelper
     ///     Gets the general save file name.
     /// </summary>
     /// <returns> The general save file name. </returns>
-    public static string GetGeneralSaveFileName()
+    internal static string GetGeneralSaveFileName()
     {
         return GameNetworkManager.generalSaveDataName;
     }
@@ -91,7 +91,7 @@ public static class ModDataHelper
     ///     This is technically an imperfect check, since a user *could* name their fields with k__BackingField. Considering
     ///     as good as no one would do that, this is a good enough check.
     /// </remarks>
-    public static bool IsKBackingField(FieldInfo fieldInfo)
+    internal static bool IsKBackingField(FieldInfo fieldInfo)
     {
         return fieldInfo.Name.Contains("k__BackingField");
     }
@@ -102,7 +102,7 @@ public static class ModDataHelper
     /// <param name="type"> Type of the field or property (used to fetch the namespace & class of the its parent). </param>
     /// <param name="guid"> GUID of the plugin that registered the field or property. </param>
     /// <returns> The generated base key for the field or property. </returns>
-    public static string GenerateBaseKey(Type type, string guid)
+    internal static string GenerateBaseKey(Type type, string guid)
     {
         return guid + "." + type.FullName;
     }
@@ -112,7 +112,7 @@ public static class ModDataHelper
     /// </summary>
     /// <param name="assembly"> Assembly of the plugin that called the method. </param>
     /// <returns> The GUID of the plugin that called the method. </returns>
-    public static string GetCallingPluginGuid(Assembly assembly)
+    internal static string GetCallingPluginGuid(Assembly assembly)
     {
         if (PluginGuids.TryGetValue(assembly, out var guid))
             return guid;
