@@ -55,7 +55,8 @@ public static class ModDataAttributeCollector
     {
         var toRemove = ModDataHandler.ModDataValues.Keys.Where(key => key.Assembly == type.Assembly).ToList();
 
-        foreach (var modDataKey in toRemove) ModDataHandler.ModDataValues.Remove(modDataKey);
+        foreach (var modDataKey in toRemove)
+            ModDataHandler.ModDataValues.Remove(modDataKey);
     }
 
     /// <summary>
@@ -66,7 +67,8 @@ public static class ModDataAttributeCollector
     {
         var toRemove = ModDataHandler.ModDataValues.Keys.Where(key => key.Instance == instance).ToList();
 
-        foreach (var modDataKey in toRemove) ModDataHandler.ModDataValues.Remove(modDataKey);
+        foreach (var modDataKey in toRemove)
+            ModDataHandler.ModDataValues.Remove(modDataKey);
     }
 
     /// <summary>
