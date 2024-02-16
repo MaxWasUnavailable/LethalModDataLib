@@ -57,6 +57,15 @@ public static class ModDataHandler
     }
 
     /// <summary>
+    ///     De-registers an instance of a class that has fields or properties registered with the ModDataAttribute.
+    /// </summary>
+    /// <param name="instance"> Instance of the class to de-register. </param>
+    public static void DeRegisterInstance(object instance)
+    {
+        ModDataAttributeCollector.DeRegisterModDataAttributes(instance);
+    }
+
+    /// <summary>
     ///     Adds a field or property to the mod data system.
     /// </summary>
     /// <param name="guid"> GUID of the plugin that registered the field or property. </param>
