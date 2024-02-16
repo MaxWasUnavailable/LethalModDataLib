@@ -9,7 +9,7 @@ flexible, offering multiple different ways to interact with the system, dependin
 
 Data is saved in `.moddata` files, which are stored in the same location as the vanilla save files. Instead of having a
 single file, or a file per mod, the library has a file for each save file, and a file for general data - essentially
-mimicking the vanilla save system. This ensures that mods do no pollute the vanilla save files. The library makes use
+mimicking the vanilla save system. This ensures that mods do not pollute the vanilla save files. The library makes use
 of ES3 to handle the actual saving and loading of the data, which should be compatible with most Unity types.
 
 When saving and loading data through the library, keys are automatically generated based on your mod's GUID and assembly
