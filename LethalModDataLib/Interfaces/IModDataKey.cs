@@ -1,3 +1,4 @@
+using System.Reflection;
 using LethalModDataLib.Attributes;
 
 namespace LethalModDataLib.Interfaces;
@@ -9,6 +10,7 @@ public interface IModDataKey
 {
     public string Name { get; }
     public string? AssemblyQualifiedName { get; }
+    public Assembly Assembly { get; }
     public object? Instance { get; }
     public bool TryGetValue(out object? value);
     public bool TrySetValue(object? value);

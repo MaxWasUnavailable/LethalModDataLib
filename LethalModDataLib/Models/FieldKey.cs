@@ -11,6 +11,7 @@ public record FieldKey(FieldInfo FieldInfo, object? Instance = null) : IModDataK
 {
     public string Name => FieldInfo.Name;
     public string? AssemblyQualifiedName => FieldInfo.FieldType.AssemblyQualifiedName;
+    public Assembly Assembly => FieldInfo.FieldType.Assembly;
 
     public bool TryGetValue(out object? value)
     {

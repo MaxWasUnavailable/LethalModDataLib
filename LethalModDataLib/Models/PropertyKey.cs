@@ -11,6 +11,7 @@ public record PropertyKey(PropertyInfo PropertyInfo, object? Instance = null) : 
 {
     public string Name => PropertyInfo.Name;
     public string? AssemblyQualifiedName => PropertyInfo.PropertyType.AssemblyQualifiedName;
+    public Assembly Assembly => PropertyInfo.PropertyType.Assembly;
 
     public bool TryGetValue(out object? value)
     {
