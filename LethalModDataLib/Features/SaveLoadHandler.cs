@@ -108,7 +108,10 @@ public static class SaveLoadHandler
         var key = ModDataHandler.GetModDataKey(modDataKey);
         var saveLocation = modDataValue.SaveLocation;
 
-        var value = LoadData<object>(key, saveLocation, autoAddGuid: false);
+        // If the field or property has a value, we'll use it as default in case no saved moddata is found
+        modDataKey.TryGetValue(out var currentValue);
+
+        var value = LoadData(key, saveLocation, autoAddGuid: false, defaultValue: currentValue);
 
         if (modDataKey.TrySetValue(value))
             return true;
