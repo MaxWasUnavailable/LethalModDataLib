@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
 using LethalModDataLib.Attributes;
@@ -23,6 +24,16 @@ public static class ModDataAttributeCollector
     }
 
     /// <summary>
+    ///     De-registers all static fields & properties decorated with ModData attributes in assemblies of BepInEx plugins.
+    /// </summary>
+    internal static void DeRegisterModDataAttributes()
+    {
+        foreach (var type in Chainloader.PluginInfos.Values.SelectMany(pluginInfo =>
+                     pluginInfo.Instance!.GetType().Assembly.GetTypes()))
+            DeRegisterModDataAttributes(type);
+    }
+
+    /// <summary>
     ///     Registers all fields & properties decorated with ModData attributes in the given type.
     /// </summary>
     /// <param name="guid"> GUID of the plugin that registered the fields. </param>
@@ -34,6 +45,28 @@ public static class ModDataAttributeCollector
     {
         AddModDataFields(guid, type, instance, keySuffix);
         AddModDataProperties(guid, type, instance, keySuffix);
+    }
+
+    /// <summary>
+    ///     De-registers all fields & properties decorated with ModData attributes in the given type.
+    /// </summary>
+    /// <param name="type"> Type to de-register the fields from. </param>
+    private static void DeRegisterModDataAttributes(Type type)
+    {
+        var toRemove = ModDataHandler.ModDataValues.Keys.Where(key => key.Assembly == type.Assembly).ToList();
+
+        foreach (var modDataKey in toRemove) ModDataHandler.ModDataValues.Remove(modDataKey);
+    }
+
+    /// <summary>
+    ///     De-registers all fields & properties decorated with ModData attributes for a given instance.
+    /// </summary>
+    /// <param name="instance"> Instance of the class to de-register the fields from. </param>
+    internal static void DeRegisterModDataAttributes(object instance)
+    {
+        var toRemove = ModDataHandler.ModDataValues.Keys.Where(key => key.Instance == instance).ToList();
+
+        foreach (var modDataKey in toRemove) ModDataHandler.ModDataValues.Remove(modDataKey);
     }
 
     /// <summary>
