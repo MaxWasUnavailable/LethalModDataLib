@@ -100,7 +100,8 @@ public static class SaveLoadHandler
         if (!ModDataHandler.ModDataValues.TryGetValue(modDataKey, out var modDataValue))
         {
             LethalModDataLib.Logger?.LogWarning(
-                $"Field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute!");
+                $"Field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute! " +
+                $"If this is an instance of a class, make sure to register it using ModDataHandler.RegisterInstance!");
             return false;
         }
 
@@ -195,7 +196,8 @@ public static class SaveLoadHandler
         if (!ModDataHandler.ModDataValues.TryGetValue(modDataKey, out var modDataValue))
         {
             LethalModDataLib.Logger?.LogWarning(
-                $"Field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute!");
+                $"Field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute! " +
+                $"If this is an instance of a class, make sure to register it using ModDataHandler.RegisterInstance!");
             return false;
         }
 
