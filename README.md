@@ -91,9 +91,13 @@ These are options for its 4 parameters:
 > class' `SaveData` and `LoadData` methods, using an `IModDataKey` object. This can be fetched using the
 > `GetIModDataKey` method in `ModDataHelper`.
 
+The ModData attribute can be used on fields and properties, both static and instanced ones, as well as public, private
+and internal ones.
+
 > [!TIP]
 >
-> Remember that non-static fields and properties with the ModData attribute will be ignored unless you register the
+> Remember that non-static (instanced) fields and properties with the ModData attribute will be ignored unless you
+> register the
 > class' instance with the ModDataHandler through the `RegisterInstance` method. De-registering an instance is done
 > through the `DeRegisterInstance` method.
 
@@ -146,9 +150,6 @@ public class SomeOtherClass
     }
 }
 ```
-
-The ModData attribute can be used on fields and properties, both static and instanced ones, as well as public, private
-and internal ones.
 
 > [!TIP]
 >
