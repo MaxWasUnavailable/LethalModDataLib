@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <AssemblyName>MaxWasUnavailable.LethalModDataLib</AssemblyName>
         <Description>A library for Lethal Company, providing a standardised way to save and load modded data.</Description>
-        <Version>0.0.2</Version>
+        <Version>0.0.3</Version>
         <Authors>MaxWasUnavailable</Authors>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
@@ -13,6 +13,7 @@
             https://api.nuget.org/v3/index.json;
             https://nuget.bepinex.dev/v3/index.json
         </RestoreAdditionalProjectSources>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>

@@ -6,6 +6,9 @@ using LethalModDataLib.Interfaces;
 
 namespace LethalModDataLib.Features;
 
+/// <summary>
+///     Class to handle saving and loading of mod data.
+/// </summary>
 public static class SaveLoadHandler
 {
     /// <summary>

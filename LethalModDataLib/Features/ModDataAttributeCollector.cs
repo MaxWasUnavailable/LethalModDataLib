@@ -14,7 +14,7 @@ namespace LethalModDataLib.Features;
 public static class ModDataAttributeCollector
 {
     /// <summary>
-    ///     Registers all static fields & properties decorated with ModData attributes in assemblies of BepInEx plugins.
+    ///     Registers all static fields and properties decorated with ModData attributes in assemblies of BepInEx plugins.
     /// </summary>
     internal static void RegisterModDataAttributes()
     {
@@ -24,7 +24,7 @@ public static class ModDataAttributeCollector
     }
 
     /// <summary>
-    ///     De-registers all static fields & properties decorated with ModData attributes in assemblies of BepInEx plugins.
+    ///     De-registers all static fields and properties decorated with ModData attributes in assemblies of BepInEx plugins.
     /// </summary>
     internal static void DeRegisterModDataAttributes()
     {
@@ -34,7 +34,7 @@ public static class ModDataAttributeCollector
     }
 
     /// <summary>
-    ///     Registers all fields & properties decorated with ModData attributes in the given type.
+    ///     Registers all fields and properties decorated with ModData attributes in the given type.
     /// </summary>
     /// <param name="guid"> GUID of the plugin that registered the fields. </param>
     /// <param name="type"> Type to register the fields from. </param>
@@ -48,7 +48,7 @@ public static class ModDataAttributeCollector
     }
 
     /// <summary>
-    ///     De-registers all fields & properties decorated with ModData attributes in the given type.
+    ///     De-registers all fields and properties decorated with ModData attributes in the given type.
     /// </summary>
     /// <param name="type"> Type to de-register the fields from. </param>
     private static void DeRegisterModDataAttributes(Type type)
@@ -60,7 +60,7 @@ public static class ModDataAttributeCollector
     }
 
     /// <summary>
-    ///     De-registers all fields & properties decorated with ModData attributes for a given instance.
+    ///     De-registers all fields and properties decorated with ModData attributes for a given instance.
     /// </summary>
     /// <param name="instance"> Instance of the class to de-register the fields from. </param>
     internal static void DeRegisterModDataAttributes(object instance)

@@ -27,8 +27,19 @@ public class ModDataAttribute : Attribute
         BaseKey = baseKey;
     }
 
+    /// <summary>
+    ///     When to load the field.
+    /// </summary>
     public LoadWhen LoadWhen { get; }
+
+    /// <summary>
+    ///     When to save the field.
+    /// </summary>
     public SaveWhen SaveWhen { get; }
+
+    /// <summary>
+    ///     Where to save the field.
+    /// </summary>
     public SaveLocation SaveLocation { get; }
 
     /// <summary>

@@ -8,6 +8,9 @@ using LethalModDataLib.Models;
 
 namespace LethalModDataLib.Helpers;
 
+/// <summary>
+///     Helper class to handle mod data.
+/// </summary>
 public static class ModDataHelper
 {
     private static readonly Dictionary<Assembly, string> PluginGuids = new();
@@ -99,7 +102,7 @@ public static class ModDataHelper
     /// <summary>
     ///     Generates a base key for a field or property registered with the ModDataAttribute.
     /// </summary>
-    /// <param name="type"> Type of the field or property (used to fetch the namespace & class of the its parent). </param>
+    /// <param name="type"> Type of the field or property (used to fetch the namespace and class of the its parent). </param>
     /// <param name="guid"> GUID of the plugin that registered the field or property. </param>
     /// <returns> The generated base key for the field or property. </returns>
     internal static string GenerateBaseKey(Type type, string guid)

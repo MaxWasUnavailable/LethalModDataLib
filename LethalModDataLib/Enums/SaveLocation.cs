@@ -1,7 +1,7 @@
 namespace LethalModDataLib.Enums;
 
 /// <summary>
-///     Enum to specify what location to save & load data.
+///     Enum to specify what location to save and load data.
 /// </summary>
 public enum SaveLocation
 {

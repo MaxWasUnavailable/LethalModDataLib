@@ -6,12 +6,19 @@ using LethalModDataLib.Features;
 
 namespace LethalModDataLib;
 
+/// <summary>
+///     Main plugin class for LethalModDataLib.
+/// </summary>
 [BepInDependency(LethalEventsLib.PluginInfo.PLUGIN_GUID, LethalEventsLib.PluginInfo.PLUGIN_VERSION)]
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class LethalModDataLib : BaseUnityPlugin
 {
     private const string ModVersionKey = "LMDLVersion";
     internal new static ManualLogSource? Logger { get; private set; }
+
+    /// <summary>
+    ///     Singleton instance of the plugin.
+    /// </summary>
     public static LethalModDataLib? Instance { get; private set; }
 
     private void Awake()
@@ -32,7 +39,7 @@ public class LethalModDataLib : BaseUnityPlugin
     /// <summary>
     ///     Check if the version of LethalModDataLib has changed since the last time the game was run.
     ///     Save the current version to general mod data.
-    ///     This is useful for debugging & bug reports.
+    ///     This is useful for debugging and bug reports.
     /// </summary>
     private static void VersionCheck()
     {
