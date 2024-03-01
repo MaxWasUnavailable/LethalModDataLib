@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net48</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <AssemblyName>MaxWasUnavailable.LethalModDataLib</AssemblyName>
         <Description>A library for Lethal Company, providing a standardised way to save and load modded data.</Description>
         <Version>0.0.2</Version>
