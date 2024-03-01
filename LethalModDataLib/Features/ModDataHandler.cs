@@ -22,7 +22,7 @@ public static class ModDataHandler
     /// </summary>
     /// <param name="iModDataKey"> IModDataKey object to get the ES3 key string for. </param>
     /// <returns> ES3 key string for the field or property. </returns>
-    internal static string ToES3KeyString(IModDataKey iModDataKey)
+    internal static string ToES3KeyString(this IModDataKey iModDataKey)
     {
         if (!ModDataValues.TryGetValue(iModDataKey, out var modDataValue))
             throw new ArgumentException($"Field {iModDataKey.Name} is not registered with the ModDataAttribute!");

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Switched to netstandard2.1
 - Renamed ModDataHandler.GetModDataKey to ModDataHandler.ToES3KeyString
+- Make ModDataHandler.ToES3KeyString an extension method
 
 ### Removed
 
