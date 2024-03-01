@@ -105,7 +105,7 @@ public static class SaveLoadHandler
             return false;
         }
 
-        var key = ModDataHandler.GetModDataKey(modDataKey);
+        var key = ModDataHandler.ToES3KeyString(modDataKey);
         var saveLocation = modDataValue.SaveLocation;
 
         // If the field or property has a value, we'll use it as default in case no saved moddata is found
@@ -204,7 +204,7 @@ public static class SaveLoadHandler
             return false;
         }
 
-        var key = ModDataHandler.GetModDataKey(modDataKey);
+        var key = ModDataHandler.ToES3KeyString(modDataKey);
         var saveLocation = modDataValue.SaveLocation;
 
         if (modDataKey.TryGetValue(out var value))

@@ -18,11 +18,11 @@ public static class ModDataHandler
     internal static Dictionary<IModDataKey, ModDataValue> ModDataValues { get; } = new();
 
     /// <summary>
-    ///     Gets the moddata key for a field or property registered with the ModDataAttribute.
+    ///     For a field or property registered with the ModDataAttribute, gets an ES3 key string for it.
     /// </summary>
-    /// <param name="iModDataKey"> IModDataKey object to get the moddata key for. </param>
-    /// <returns> The moddata key for the field. </returns>
-    internal static string GetModDataKey(IModDataKey iModDataKey)
+    /// <param name="iModDataKey"> IModDataKey object to get the ES3 key string for. </param>
+    /// <returns> ES3 key string for the field or property. </returns>
+    internal static string ToES3KeyString(IModDataKey iModDataKey)
     {
         if (!ModDataValues.TryGetValue(iModDataKey, out var modDataValue))
             throw new ArgumentException($"Field {iModDataKey.Name} is not registered with the ModDataAttribute!");
@@ -182,6 +182,7 @@ public static class ModDataHandler
             HandleLoadModData(modDataKey);
     }
 
+    /// TODO: Rework this to use save file name instead. Event is slightly incorrect, too. Fetching the name somehow would be more compatible with e.g. more save file mods.
     /// <summary>
     ///     Deletes the mod data file matching the save file name.
     /// </summary>
