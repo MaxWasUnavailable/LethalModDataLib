@@ -6,7 +6,7 @@ using LethalModDataLib.Events;
 namespace LethalModDataLib.Patches;
 
 /// <summary>
-///     Patches for ES3.
+///     Patches for <see cref="ES3" />.
 ///     For events related to deleting save files.
 /// </summary>
 [HarmonyPatch(typeof(ES3))]
