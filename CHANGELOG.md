@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - OnLoadData
   - OnDeleteData
   - OnMainMenu
+- ModDataConfiguration, as a more future-proof way of configuring the ModData system
+- ModDataAttribute constructor that takes a ModDataConfiguration
+  - Old constructor is now obsolete, and will be removed in a future version
 
 ### Fixed
 

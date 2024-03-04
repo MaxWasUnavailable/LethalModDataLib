@@ -1,5 +1,6 @@
 using System;
 using LethalModDataLib.Enums;
+using LethalModDataLib.Models;
 
 namespace LethalModDataLib.Attributes;
 
@@ -19,13 +20,33 @@ public class ModDataAttribute : Attribute
     ///     Key prefix for the field. The ModData system will automatically set this to the mod's GUID
     ///     unless it is set manually.
     /// </param>
+    [Obsolete("Use the new ModDataConfiguration constructor instead.")]
     public ModDataAttribute(SaveWhen saveWhen, LoadWhen loadWhen, SaveLocation saveLocation, string? baseKey = null)
     {
         SaveWhen = saveWhen;
         LoadWhen = loadWhen;
         SaveLocation = saveLocation;
         BaseKey = baseKey;
+        Configuration = new ModDataConfiguration(saveWhen, loadWhen, saveLocation, baseKey);
     }
+
+    /// <summary>
+    ///     Attribute to mark fields or properties to be saved and loaded by the mod data system.
+    /// </summary>
+    /// <param name="configuration"> Configuration for the mod data attribute. </param>
+    public ModDataAttribute(ModDataConfiguration configuration)
+    {
+        SaveWhen = configuration.SaveWhen;
+        LoadWhen = configuration.LoadWhen;
+        SaveLocation = configuration.SaveLocation;
+        BaseKey = configuration.BaseKey;
+        Configuration = configuration;
+    }
+
+    /// <summary>
+    ///     ModData Configuration for the attribute.
+    /// </summary>
+    public ModDataConfiguration Configuration { get; }
 
     /// <summary>
     ///     When to load the field.
