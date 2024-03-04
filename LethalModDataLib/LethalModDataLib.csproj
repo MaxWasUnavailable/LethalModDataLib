@@ -36,6 +36,7 @@
     <ItemGroup>
         <Reference Include="Assembly-CSharp" HintPath="$(LC_REFERENCES)\Assembly-CSharp.dll" Private="False" Publicize="true"/>
         <Reference Include="Assembly-CSharp-firstpass" HintPath="$(LC_REFERENCES)\Assembly-CSharp-firstpass.dll" Private="False" Publicize="true"/>
+        <Reference Include="Unity.Netcode.Runtime" HintPath="$(LC_REFERENCES)\Unity.Netcode.Runtime.dll" Private="False" Publicize="true"/>
         <Reference Include="LethalEventsLib" HintPath="Dependencies\LethalEventsLib.dll" Private="False"/>
     </ItemGroup>
 </Project>

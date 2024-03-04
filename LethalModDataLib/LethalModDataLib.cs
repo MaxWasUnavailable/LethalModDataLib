@@ -1,7 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using LethalEventsLib.Events;
 using LethalModDataLib.Enums;
+using LethalModDataLib.Events;
 using LethalModDataLib.Features;
 
 namespace LethalModDataLib;
@@ -9,7 +9,6 @@ namespace LethalModDataLib;
 /// <summary>
 ///     Main plugin class for LethalModDataLib.
 /// </summary>
-[BepInDependency(LethalEventsLib.PluginInfo.PLUGIN_GUID, LethalEventsLib.PluginInfo.PLUGIN_VERSION)]
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class LethalModDataLib : BaseUnityPlugin
 {
@@ -30,7 +29,7 @@ public class LethalModDataLib : BaseUnityPlugin
         Logger = base.Logger;
 
         // Hook up initialisation event
-        SystemEvents.PostInitializeGameEvent += OnGameInitialized;
+        MiscEvents.PostInitializeGameEvent += OnGameInitialized;
 
         // Plugin startup logic
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
@@ -82,7 +81,7 @@ public class LethalModDataLib : BaseUnityPlugin
         ModDataHandler.Initialise();
 
         // Unhook initialisation event
-        SystemEvents.PostInitializeGameEvent -= OnGameInitialized;
+        MiscEvents.PostInitializeGameEvent -= OnGameInitialized;
 
         // Check version
         VersionCheck();

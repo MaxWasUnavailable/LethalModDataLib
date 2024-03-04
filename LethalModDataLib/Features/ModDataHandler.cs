@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LethalEventsLib.Events;
 using LethalModDataLib.Enums;
+using LethalModDataLib.Events;
 using LethalModDataLib.Helpers;
 using LethalModDataLib.Interfaces;
 using LethalModDataLib.Models;
@@ -100,10 +100,10 @@ public static class ModDataHandler
         ModDataAttributeCollector.RegisterModDataAttributes();
 
         LethalModDataLib.Logger?.LogInfo("Hooking up save, load and delete events...");
-        SystemEvents.PostSaveGameEvent += OnSave;
-        SystemEvents.PostAutoSaveShipDataEvent += OnAutoSave;
-        SystemEvents.PostLoadGameEvent += OnLoad;
-        SystemEvents.PostDeleteFileEvent += OnDeleteSave;
+        SaveLoadEvents.PostSaveGameEvent += OnSave;
+        SaveLoadEvents.PostAutoSaveEvent += OnAutoSave;
+        SaveLoadEvents.PostLoadGameEvent += OnLoad;
+        SaveLoadEvents.PostDeleteSaveEvent += OnDeleteSave;
 
         LethalModDataLib.Logger?.LogInfo("ModDataHandler initialised!");
     }
@@ -182,23 +182,13 @@ public static class ModDataHandler
             HandleLoadModData(modDataKey);
     }
 
-    /// TODO: Rework this to use save file name instead. Event is slightly incorrect, too. Fetching the name somehow would be more compatible with e.g. more save file mods.
     /// <summary>
     ///     Deletes the mod data file matching the save file name.
     /// </summary>
-    /// <param name="saveFileNum"> Save file number. </param>
-    private static void OnDeleteSave(int saveFileNum)
+    /// <param name="filePath"> Save file path to delete the mod data file for. </param>
+    private static void OnDeleteSave(string filePath)
     {
-        var saveFileName = saveFileNum switch
-        {
-            -1 => GameNetworkManager.LCchallengeFileName,
-            0 => GameNetworkManager.LCsaveFile1Name,
-            1 => GameNetworkManager.LCsaveFile2Name,
-            2 => GameNetworkManager.LCsaveFile3Name,
-            _ => GameNetworkManager.LCsaveFile1Name
-        };
-
-        DeleteModDataFile(saveFileName);
+        // DeleteModDataFile(filePath);
     }
 
     #endregion

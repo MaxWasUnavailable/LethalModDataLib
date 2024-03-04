@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Events to replace the need for LethalEventsLib
+  - OnSaveData
+  - OnLoadData
+  - OnDeleteData
+  - OnMainMenu
+
 ### Fixed
 
 ### Changed
@@ -16,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed GetIModDataKey to GetModDataKey
 
 ### Removed
+
+- Dependency on LethalEventsLib
 
 ## [0.0.3] - 01/03/2024
 
