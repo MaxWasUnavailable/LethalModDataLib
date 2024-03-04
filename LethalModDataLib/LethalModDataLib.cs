@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using HarmonyLib;
 using LethalModDataLib.Enums;
 using LethalModDataLib.Events;
 using LethalModDataLib.Features;
@@ -13,7 +14,9 @@ namespace LethalModDataLib;
 public class LethalModDataLib : BaseUnityPlugin
 {
     private const string ModVersionKey = "LMDLVersion";
+    private bool _isPatched;
     internal new static ManualLogSource? Logger { get; private set; }
+    private Harmony? Harmony { get; set; }
 
     /// <summary>
     ///     Singleton instance of the plugin.
@@ -27,6 +30,9 @@ public class LethalModDataLib : BaseUnityPlugin
 
         // Init logger
         Logger = base.Logger;
+
+        // Patch using Harmony
+        PatchAll();
 
         // Hook up initialisation event
         MiscEvents.PostInitializeGameEvent += OnGameInitialized;
@@ -85,5 +91,23 @@ public class LethalModDataLib : BaseUnityPlugin
 
         // Check version
         VersionCheck();
+    }
+
+    private void PatchAll()
+    {
+        if (_isPatched)
+        {
+            Logger?.LogWarning("Already patched!");
+            return;
+        }
+
+        Logger?.LogDebug("Patching...");
+
+        Harmony ??= new Harmony(PluginInfo.PLUGIN_GUID);
+
+        Harmony.PatchAll();
+        _isPatched = true;
+
+        Logger?.LogDebug("Patched!");
     }
 }
