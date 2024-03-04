@@ -18,7 +18,7 @@ internal static class ES3Patches
     ///     Triggers after a file is deleted through ES3.
     /// </summary>
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(ES3.DeleteFile))]
+    [HarmonyPatch(nameof(ES3.DeleteFile), typeof(string))]
     private static void DeleteFilePostfix(string filePath)
     {
         if (filePath.Contains(".moddata"))

@@ -15,8 +15,8 @@ public class LethalModDataLib : BaseUnityPlugin
 {
     private const string ModVersionKey = "LMDLVersion";
     private bool _isPatched;
-    internal new static ManualLogSource? Logger { get; private set; }
     private Harmony? Harmony { get; set; }
+    internal new static ManualLogSource? Logger { get; private set; }
 
     /// <summary>
     ///     Singleton instance of the plugin.
@@ -68,7 +68,7 @@ public class LethalModDataLib : BaseUnityPlugin
             }
             else
             {
-                SaveLoadHandler.SaveData(version ?? string.Empty, ModVersionKey + "_old", SaveLocation.GeneralSave);
+                SaveLoadHandler.SaveData(version, ModVersionKey + "_old", SaveLocation.GeneralSave);
                 Logger?.LogWarning(
                     $"Mismatch between last saved LethalModDataLib version ({version})" +
                     $"and current version ({PluginInfo.PLUGIN_VERSION})." +
