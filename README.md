@@ -83,13 +83,13 @@ These are options for its 4 parameters:
   general, you should not need to set this unless you are e.g. trying to access the data from another mod which is not
   enabled. Note that using the same base key for multiple fields will very likely cause unexpected behaviour. (If you
   do want to use the same key as a currently enabled mod, for some case I can't imagine, you should be using the
-  `GetIModDataKey` method in `ModDataHelper` to fetch its information).
+  `GetModDataKey` method in `ModDataHelper` to fetch its information).
 
 > [!IMPORTANT]
 >
 > To manually trigger saving & loading of an attribute-marked field or property, you can use the `SaveLoadHandler`
 > class' `SaveData` and `LoadData` methods, using an `IModDataKey` object. This can be fetched using the
-> `GetIModDataKey` method in `ModDataHelper`.
+> `GetModDataKey` method in `ModDataHelper`.
 
 The ModData attribute can be used on fields and properties, both static and instanced ones, as well as public, private
 and internal ones.
@@ -122,10 +122,10 @@ public class SomeClass
     {
         // (...)
         
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
+        SaveLoadHandler.SaveData(ModDataHelper.GetModDataKey(this, nameof(__someFloat)));
         
         // Note that we can also force a save or load of automated fields/properties:
-        SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(SomeString)));
+        SaveLoadHandler.LoadData(ModDataHelper.GetModDataKey(this, nameof(SomeString)));
         
         // This might be useful to instantiate values for instances that may be null when the OnLoad event is called.
         if (string.IsNullOrEmpty(SomeString))
@@ -168,7 +168,7 @@ public class SomeClass
     {
         // (...)
         
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(this), nameof(SomeString))); // Note the use of typeof(this) instead of this
+        SaveLoadHandler.SaveData(ModDataHelper.GetModDataKey(typeof(this), nameof(SomeString))); // Note the use of typeof(this) instead of this
         
         // (...)
     }
@@ -182,7 +182,7 @@ public class SomeOtherClass
     {
         // (...)
         
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(typeof(SomeClass), nameof(SomeClass.SomeString))); // Note the use of typeof(SomeClass)
+        SaveLoadHandler.SaveData(ModDataHelper.GetModDataKey(typeof(SomeClass), nameof(SomeClass.SomeString))); // Note the use of typeof(SomeClass)
         
         // (...)
     }
@@ -312,7 +312,7 @@ The `SaveLoadHandler` class has a SaveData & LoadData method, with two public si
 public static bool SaveData<T>(T? data, string key, SaveLocation saveLocation = SaveLocation.CurrentSave, bool autoAddGuid = true)
     
 // For usage with the SaveWhen.Manual attribute parameter. You will need to fetch the IModDataKey object for the field or property you want to save.
-// This can be done using the GetIModDataKey method in ModDataHelper.
+// This can be done using the GetModDataKey method in ModDataHelper.
 // Note: This will save the data from the field/property, rather than requiring you to pass a value through the method.
 public static bool SaveData(IModDataKey modDataKey)
 ```
@@ -323,7 +323,7 @@ public static bool SaveData(IModDataKey modDataKey)
 public static T? LoadData<T>(string key, T? defaultValue = default, SaveLocation saveLocation = SaveLocation.CurrentSave, bool autoAddGuid = true)
     
 // For usage with the LoadWhen.Manual attribute parameter. You will need to fetch the IModDataKey object for the field or property you want to load.
-// This can be done using the GetIModDataKey method in ModDataHelper.
+// This can be done using the GetModDataKey method in ModDataHelper.
 // Note: This will load the data into the field/property, rather than requiring you to assign the value returned by the method.
 public static bool LoadData(IModDataKey modDataKey)
 ```
@@ -366,7 +366,7 @@ public class SomeClass
     {
         // (...)
         
-        SaveLoadHandler.SaveData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
+        SaveLoadHandler.SaveData(ModDataHelper.GetModDataKey(this, nameof(__someFloat)));
         
         // (...)
     }
@@ -376,7 +376,7 @@ public class SomeClass
     {
         // (...)
         
-        SaveLoadHandler.LoadData(ModDataHelper.GetIModDataKey(this, nameof(__someFloat)));
+        SaveLoadHandler.LoadData(ModDataHelper.GetModDataKey(this, nameof(__someFloat)));
         
         // (...)
     }

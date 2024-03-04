@@ -24,7 +24,7 @@ public static class ModDataHelper
     /// <param name="fieldPropertyName"> Name of the field or property to get the info for. </param>
     /// <returns> An IModDataKey object for the field or property. </returns>
     /// <remarks> It is recommended to use nameof() to get the field or property name. </remarks>
-    public static IModDataKey? GetIModDataKey(object instanceOrType, string fieldPropertyName)
+    public static IModDataKey? GetModDataKey(object instanceOrType, string fieldPropertyName)
     {
         object? instance = null;
         Type type;

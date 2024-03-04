@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Renamed GetIModDataKey to GetModDataKey
+
 ### Removed
 
 ## [0.0.3] - 01/03/2024
