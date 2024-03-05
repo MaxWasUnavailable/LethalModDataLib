@@ -24,8 +24,6 @@ internal static class ES3Patches
         if (filePath.Contains(".moddata"))
             return;
 
-        LethalModDataLib.Logger?.LogError($"File {filePath} deleted!");
-
         SaveLoadEvents.OnPostDeleteSave(filePath);
     }
 }
