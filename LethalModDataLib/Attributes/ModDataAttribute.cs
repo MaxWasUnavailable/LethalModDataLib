@@ -13,55 +13,32 @@ public class ModDataAttribute : Attribute
     /// <summary>
     ///     Attribute to mark fields or properties to be saved and loaded by the mod data system.
     /// </summary>
-    /// <param name="saveWhen"> When to save the field. <see cref="SaveWhen" /> </param>
-    /// <param name="loadWhen"> When to load the field. <see cref="LoadWhen" /> </param>
-    /// <param name="saveLocation"> Where to save the field. <see cref="SaveLocation" /> </param>
-    /// <param name="baseKey">
-    ///     Key prefix for the field. The ModData system will automatically set this to the mod's GUID
-    ///     unless it is set manually.
-    /// </param>
-    [Obsolete("Use the new ModDataConfiguration constructor instead.")]
-    public ModDataAttribute(SaveWhen saveWhen, LoadWhen loadWhen, SaveLocation saveLocation, string? baseKey = null)
-    {
-        SaveWhen = saveWhen;
-        LoadWhen = loadWhen;
-        SaveLocation = saveLocation;
-        BaseKey = baseKey;
-        Configuration = new ModDataConfiguration(saveWhen, loadWhen, saveLocation, baseKey);
-    }
-
-    /// <summary>
-    ///     Attribute to mark fields or properties to be saved and loaded by the mod data system.
-    /// </summary>
     /// <param name="configuration"> Configuration for the mod data attribute. </param>
     public ModDataAttribute(ModDataConfiguration configuration)
     {
-        SaveWhen = configuration.SaveWhen;
-        LoadWhen = configuration.LoadWhen;
-        SaveLocation = configuration.SaveLocation;
-        BaseKey = configuration.BaseKey;
         Configuration = configuration;
+        BaseKey = configuration.BaseKey;
     }
 
     /// <summary>
     ///     ModData Configuration for the attribute.
     /// </summary>
-    public ModDataConfiguration Configuration { get; }
+    private ModDataConfiguration Configuration { get; }
 
     /// <summary>
     ///     When to load the field.
     /// </summary>
-    public LoadWhen LoadWhen { get; }
+    public LoadWhen LoadWhen => Configuration.LoadWhen;
 
     /// <summary>
     ///     When to save the field.
     /// </summary>
-    public SaveWhen SaveWhen { get; }
+    public SaveWhen SaveWhen => Configuration.SaveWhen;
 
     /// <summary>
     ///     Where to save the field.
     /// </summary>
-    public SaveLocation SaveLocation { get; }
+    public SaveLocation SaveLocation => Configuration.SaveLocation;
 
     /// <summary>
     ///     Key prefix for the field. The ModData system will automatically set this to the mod's GUID unless it is set
