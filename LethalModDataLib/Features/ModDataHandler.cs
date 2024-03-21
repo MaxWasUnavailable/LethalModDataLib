@@ -25,11 +25,12 @@ public static class ModDataHandler
     internal static string ToES3KeyString(this IModDataKey iModDataKey)
     {
         if (!ModDataValues.TryGetValue(iModDataKey, out var modDataValue))
-            throw new ArgumentException($"Field {iModDataKey.Name} is not registered with the ModDataAttribute!");
+            throw new ArgumentException(
+                $"Field or property with name {iModDataKey.Name} from {iModDataKey.AssemblyQualifiedName} is not registered with the ModDataAttribute!");
 
         if (modDataValue.BaseKey == null)
             throw new ArgumentException(
-                $"Field {iModDataKey.Name} from {iModDataKey.AssemblyQualifiedName} has no base key!");
+                $"Field or property with name {iModDataKey.Name} from {iModDataKey.AssemblyQualifiedName} has no base key!");
 
         var key = modDataValue.BaseKey + ".";
 
@@ -79,14 +80,14 @@ public static class ModDataHandler
         if (ModDataValues.ContainsKey(modDataKey))
         {
             LethalModDataLib.Logger?.LogWarning(
-                $"Property {modDataKey.Name} from {type.AssemblyQualifiedName} is already registered!");
+                $"Field or property with name {modDataKey.Name} from {type.AssemblyQualifiedName} is already registered!");
             return;
         }
 
         ModDataValues.Add(modDataKey, new ModDataValue(modDataKey.GetModDataAttribute(), keySuffix));
         ModDataValues[modDataKey].BaseKey ??= ModDataHelper.GenerateBaseKey(type, guid);
         LethalModDataLib.Logger?.LogDebug(
-            $"Added property {modDataKey.Name} from {guid}.{type.FullName} to the mod data system!");
+            $"Added field or property with name {modDataKey.Name} from {type.AssemblyQualifiedName} to the mod data system!");
     }
 
     #region Initialisation
@@ -120,7 +121,7 @@ public static class ModDataHandler
     {
         if (!SaveLoadHandler.SaveData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
-                $"Failed to save field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}!");
+                $"Failed to save field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}!");
     }
 
     /// <summary>
@@ -131,7 +132,7 @@ public static class ModDataHandler
     {
         if (!SaveLoadHandler.LoadData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
-                $"Failed to load field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}!");
+                $"Failed to load field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}!");
     }
 
     /// <summary>
