@@ -56,14 +56,14 @@ public static class ModDataHelper
             .GetProperty(fieldPropertyName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-        if (propertyInfo != null)
-        {
-            if (propertyInfo.GetGetMethod(true).IsStatic)
-                instance = null;
-            return new PropertyKey(propertyInfo, instance);
-        }
+        if (propertyInfo == null)
+            throw new ArgumentException(
+                $"Field or property {fieldPropertyName} does not exist in {type.AssemblyQualifiedName}!");
 
-        throw new ArgumentException($"Field or property {fieldPropertyName} does not exist in {type.FullName}!");
+        if (propertyInfo.GetGetMethod(true).IsStatic)
+            instance = null;
+
+        return new PropertyKey(propertyInfo, instance);
     }
 
     /// <summary>
