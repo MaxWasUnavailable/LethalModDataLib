@@ -153,8 +153,6 @@ public static class ModDataHandler
         }
     }
 
-    // TODO: Use flags here
-
     /// <summary>
     ///     Saves all mod data attributed objects that have their SaveWhen set to OnSave.
     /// </summary>
