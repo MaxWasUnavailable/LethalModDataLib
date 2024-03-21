@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
+using LethalModDataLib.Enums;
+using LethalModDataLib.Features;
 using LethalModDataLib.Interfaces;
 using LethalModDataLib.Models;
 
@@ -64,6 +66,54 @@ public static class ModDataHelper
             instance = null;
 
         return new PropertyKey(propertyInfo, instance);
+    }
+
+    /// <summary>
+    ///     Triggers the save event for fields & properties of the **calling** plugin.
+    /// </summary>
+    /// <param name="saveWhen"> Which save event(s) to trigger. </param>
+    public static void TriggerSaveEvent(SaveWhen saveWhen)
+    {
+        var callingAssembly = Assembly.GetCallingAssembly();
+
+        // We iterate over all registered fields and properties & filter by the calling assembly
+        foreach (var modDataKey in ModDataHandler.ModDataValues.Keys
+                     .Where(modDataKey => modDataKey.Assembly == callingAssembly))
+        {
+            var modDataValue = ModDataHandler.ModDataValues[modDataKey];
+
+            // Check if any of the save events match. If none do, or if they match on Manual, the result will be 0.
+            if ((modDataValue.SaveWhen & saveWhen) != 0)
+                ModDataHandler.HandleSaveModData(modDataKey);
+
+            // Hence, we need to do another explicit check for Manual
+            if (modDataValue.SaveWhen.HasFlag(SaveWhen.Manual) && saveWhen.HasFlag(SaveWhen.Manual))
+                ModDataHandler.HandleSaveModData(modDataKey);
+        }
+    }
+
+    /// <summary>
+    ///     Triggers the load event for fields & properties of the **calling** plugin.
+    /// </summary>
+    /// <param name="loadWhen"> Which load event(s) to trigger. </param>
+    public static void TriggerLoadEvent(LoadWhen loadWhen)
+    {
+        var callingAssembly = Assembly.GetCallingAssembly();
+
+        // We iterate over all registered fields and properties & filter by the calling assembly
+        foreach (var modDataKey in ModDataHandler.ModDataValues.Keys
+                     .Where(modDataKey => modDataKey.Assembly == callingAssembly))
+        {
+            var modDataValue = ModDataHandler.ModDataValues[modDataKey];
+
+            // Check if any of the load events match. If none do, or if they match on Manual, the result will be 0.
+            if ((modDataValue.LoadWhen & loadWhen) != 0)
+                ModDataHandler.HandleLoadModData(modDataKey);
+
+            // Hence, we need to do another explicit check for Manual
+            if (modDataValue.LoadWhen.HasFlag(LoadWhen.Manual) && loadWhen.HasFlag(LoadWhen.Manual))
+                ModDataHandler.HandleLoadModData(modDataKey);
+        }
     }
 
     /// <summary>

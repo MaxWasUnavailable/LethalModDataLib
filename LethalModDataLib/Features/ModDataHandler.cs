@@ -117,7 +117,7 @@ public static class ModDataHandler
     ///     Saves the mod data attributed object.
     /// </summary>
     /// <param name="modDataKey"> ModDataKey of the object to save. </param>
-    private static void HandleSaveModData(IModDataKey modDataKey)
+    internal static void HandleSaveModData(IModDataKey modDataKey)
     {
         if (!SaveLoadHandler.SaveData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
@@ -128,7 +128,7 @@ public static class ModDataHandler
     ///     Loads the mod data attributed object.
     /// </summary>
     /// <param name="modDataKey"> ModDataKey of the object to load. </param>
-    private static void HandleLoadModData(IModDataKey modDataKey)
+    internal static void HandleLoadModData(IModDataKey modDataKey)
     {
         if (!SaveLoadHandler.LoadData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
