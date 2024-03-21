@@ -1,17 +1,25 @@
+using System;
+
 namespace LethalModDataLib.Enums;
 
 /// <summary>
-///     Enum to specify when to load fields marked with <see cref="Attributes.ModDataAttribute" />.
+///     Enum to specify when to load fields/properties marked with <see cref="Attributes.ModDataAttribute" />.
 /// </summary>
+[Flags]
 public enum LoadWhen
 {
     /// <summary>
     ///     Loading is left to the modder to handle.
     /// </summary>
-    Manual,
+    Manual = 0,
 
     /// <summary>
     ///     Load when the game loads a save.
     /// </summary>
-    OnLoad
+    OnLoad = 1,
+
+    /// <summary>
+    ///     Load as soon as the field/property is registered by the API.
+    /// </summary>
+    Immediately = 2
 }
