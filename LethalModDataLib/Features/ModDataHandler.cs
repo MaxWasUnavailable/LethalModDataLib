@@ -189,7 +189,7 @@ public static class ModDataHandler
     /// <param name="filePath"> Save file path to delete the mod data file for. </param>
     private static void OnDeleteSave(string filePath)
     {
-        // DeleteModDataFile(filePath);
+        DeleteModDataFile(filePath);
     }
 
     #endregion
