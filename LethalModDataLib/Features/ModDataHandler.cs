@@ -181,7 +181,7 @@ public static class ModDataHandler
     private static void OnLoad(bool isChallengeFile, string saveFileName)
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
-                     ModDataValues[modDataKey].LoadWhen == LoadWhen.OnLoad))
+                     ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnLoad)))
             HandleLoadModData(modDataKey);
     }
 
