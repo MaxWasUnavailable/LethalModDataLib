@@ -86,6 +86,15 @@ public static class ModDataHelper
     }
 
     /// <summary>
+    ///     Checks if the player is the host.
+    /// </summary>
+    /// <returns> True if the player is the host, false otherwise. </returns>
+    internal static bool IsHost()
+    {
+        return GameNetworkManager.Instance.isHostingGame;
+    }
+
+    /// <summary>
     ///     Checks if a field is a k__BackingField.
     /// </summary>
     /// <param name="fieldInfo"> Field info to check. </param>
