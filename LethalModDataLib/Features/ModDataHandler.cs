@@ -153,13 +153,15 @@ public static class ModDataHandler
         }
     }
 
+    // TODO: Use flags here
+
     /// <summary>
     ///     Saves all mod data attributed objects that have their SaveWhen set to OnSave.
     /// </summary>
     private static void OnSave(bool isChallengeFile, string saveFileName)
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
-                     ModDataValues[modDataKey].SaveWhen == SaveWhen.OnSave))
+                     ModDataValues[modDataKey].SaveWhen.HasFlag(SaveWhen.OnSave)))
             HandleSaveModData(modDataKey);
     }
 
@@ -169,7 +171,7 @@ public static class ModDataHandler
     private static void OnAutoSave(bool isChallengeFile, string saveFileName)
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
-                     ModDataValues[modDataKey].SaveWhen == SaveWhen.OnAutoSave))
+                     ModDataValues[modDataKey].SaveWhen.HasFlag(SaveWhen.OnAutoSave)))
             HandleSaveModData(modDataKey);
     }
 

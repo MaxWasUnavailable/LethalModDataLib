@@ -75,6 +75,13 @@ public static class SaveLoadHandler
     public static T? LoadData<T>(string key, SaveLocation saveLocation = SaveLocation.CurrentSave,
         T? defaultValue = default, bool autoAddGuid = true)
     {
+        // We prevent loading from the current save file if we're not the host. Mods should sync values to clients in this case.
+        if (saveLocation == SaveLocation.CurrentSave && !ModDataHelper.IsHost())
+        {
+            LethalModDataLib.Logger?.LogDebug($"Not loading {key} from current save file as we're not the host!");
+            return defaultValue;
+        }
+
         // ReSharper disable once InvertIf
         if (autoAddGuid)
         {
@@ -165,7 +172,7 @@ public static class SaveLoadHandler
     /// <param name="saveLocation"> Save location enum to use for determining the file name. </param>
     /// <param name="autoAddGuid">
     ///     Whether or not to automatically add the GUID of the plugin that called the method to the
-    ///     key.
+    ///     key. Highly recommended to keep this set to true unless you fully understand the implications.
     /// </param>
     /// <typeparam name="T"> Type of the data to save. </typeparam>
     /// <returns> True if the data was saved successfully, false otherwise. </returns>
@@ -174,6 +181,13 @@ public static class SaveLoadHandler
     public static bool SaveData<T>(T? data, string key, SaveLocation saveLocation = SaveLocation.CurrentSave,
         bool autoAddGuid = true)
     {
+        // We prevent saving to the current save file if we're not the host, since that would impact our own (unrelated) client save files
+        if (saveLocation == SaveLocation.CurrentSave && !ModDataHelper.IsHost())
+        {
+            LethalModDataLib.Logger?.LogDebug($"Not saving {key} to current save file as we're not the host!");
+            return false;
+        }
+
         // ReSharper disable once InvertIf
         if (autoAddGuid)
         {
