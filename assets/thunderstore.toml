@@ -1,0 +1,34 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "MaxWasUnavailable"
+name = "LethalModDataLib"
+description = "A library for Lethal Company, providing a standardised way to save and load modded data. "
+websiteUrl = "https://github.com/MaxWasUnavailable/LethalModDataLib"
+containsNsfwContent = false
+[package.dependencies]
+BepInEx-BepInExPack = "5.4.2100"
+
+[build]
+icon = "icon_256x256.png"
+readme = "../README.md"
+outdir = "../dist"
+
+[[build.copy]]
+source = "../LICENSE"
+target = "/"
+
+[[build.copy]]
+source = "../CHANGELOG.md"
+target = "/"
+
+[[build.copy]]
+source = "../LethalModDataLib/bin/Release/netstandard2.1/MaxWasUnavailable.LethalModDataLib.dll"
+target = "/BepInEx/plugins/LethalModDataLib/"
+
+[publish]
+communities = [ "lethal-company", ]
+repository = "https://thunderstore.io"
+[publish.categories]
+lethal-company = [ "bepinex", "mods", "libraries", "misc", "serverside", "clientside" ]
