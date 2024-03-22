@@ -2,6 +2,8 @@
 
 *A library for mod data saving & loading.*
 
+[![Build](https://img.shields.io/github/actions/workflow/status/MaxWasUnavailable/LethalModDataLib/dotnet.yml?style=for-the-badge&logo=github&branch=master)](https://github.com/MaxWasUnavailable/LethalModDataLib/actions/workflows/dotnet.yml)
+
 ## What is this?
 
 This library provides a standardised way to save and load persistent data for mods. It is designed to be easy to use and
