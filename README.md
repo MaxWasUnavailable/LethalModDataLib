@@ -2,7 +2,7 @@
 
 *A library for mod data saving & loading.*
 
-[![Build](https://img.shields.io/github/actions/workflow/status/MaxWasUnavailable/LethalModDataLib/dotnet.yml?style=for-the-badge&logo=github&branch=master)](https://github.com/MaxWasUnavailable/LethalModDataLib/actions/workflows/dotnet.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/MaxWasUnavailable/LethalModDataLib/build.yml?style=for-the-badge&logo=github&branch=master)](https://github.com/MaxWasUnavailable/LethalModDataLib/actions/workflows/build.yml)
 
 ## What is this?
 
