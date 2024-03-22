@@ -9,20 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [1.0.0]
+
+### Added
+
 - Events to replace the need for LethalEventsLib
   - OnSaveData
   - OnLoadData
   - OnDeleteData
   - OnMainMenu
 - ModDataConfiguration, as a more future-proof way of configuring the ModData system
-- ModDataAttribute constructor that takes a ModDataConfiguration
-  - Old constructor is now obsolete, and will be removed in a future version
+- Empty ModDataAttribute constructor that allows for property initialisation
+- Ability to trigger a manual "event"(-esque) save/load for data in your mod (essentially triggering what a save/load
+  event would do, but without it actually triggering, and without impacting other mods' data)
 
 ### Fixed
+
+- Take into account whether or not the client is the lobby host when saving/loading CurrentSave data
 
 ### Changed
 
 - Renamed GetIModDataKey to GetModDataKey
+- SaveWhen and LoadWhen are now flags
+- Some better / more verbose logging for exceptions
 
 ### Removed
 
