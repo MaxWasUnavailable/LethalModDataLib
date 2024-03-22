@@ -69,7 +69,7 @@ public static class ModDataHelper
     }
 
     /// <summary>
-    ///     Triggers the save event for fields & properties of the **calling** plugin.
+    ///     Triggers the save event for fields and properties of the **calling** plugin.
     /// </summary>
     /// <param name="saveWhen"> Which save event(s) to trigger. </param>
     public static void TriggerSaveEvent(SaveWhen saveWhen)
@@ -93,7 +93,7 @@ public static class ModDataHelper
     }
 
     /// <summary>
-    ///     Triggers the load event for fields & properties of the **calling** plugin.
+    ///     Triggers the load event for fields and properties of the **calling** plugin.
     /// </summary>
     /// <param name="loadWhen"> Which load event(s) to trigger. </param>
     public static void TriggerLoadEvent(LoadWhen loadWhen)
