@@ -70,10 +70,10 @@ public class LethalModDataLib : BaseUnityPlugin
             {
                 SaveLoadHandler.SaveData(version, ModVersionKey + "_old", SaveLocation.GeneralSave);
                 Logger?.LogWarning(
-                    $"Mismatch between last saved LethalModDataLib version ({version})" +
-                    $"and current version ({PluginInfo.PLUGIN_VERSION})." +
-                    $"This is normal if you have updated LethalModDataLib." +
-                    $"Make sure to check the changelog for breaking changes.");
+                    $"Mismatch between last saved LethalModDataLib version ({version}) " +
+                    $"and current version ({PluginInfo.PLUGIN_VERSION}). " +
+                    $"This is normal if you have updated LethalModDataLib. " +
+                    $"Make sure to check the changelog for breaking changes. ");
             }
         }
 
