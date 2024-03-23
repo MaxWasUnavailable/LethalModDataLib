@@ -69,7 +69,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nupkg-build
-          path: ./LobbyCompatibility/bin/Release
+          path: ./LethalModDataLib/bin/Release
 
       - name: Setup .NET environment
         uses: actions/setup-dotnet@v3
