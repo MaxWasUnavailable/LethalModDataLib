@@ -3,6 +3,9 @@
 *A library for mod data saving & loading.*
 
 [![Build](https://img.shields.io/github/actions/workflow/status/MaxWasUnavailable/LethalModDataLib/build.yml?style=for-the-badge&logo=github&branch=master)](https://github.com/MaxWasUnavailable/LethalModDataLib/actions/workflows/build.yml)
+[![Latest Version](https://img.shields.io/thunderstore/v/MaxWasUnavailable/LethalModDataLib?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/MaxWasUnavailable/LethalModDataLib)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/MaxWasUnavailable/LethalModDataLib?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/MaxWasUnavailable/LethalModDataLib)
+[![NuGet Version](https://img.shields.io/nuget/v/MaxWasUnavailable.LethalModDataLib?style=for-the-badge&logo=nuget)](https://www.nuget.org/packages/MaxWasUnavailable.LethalModDataLib)
 
 ## What is this?
 
