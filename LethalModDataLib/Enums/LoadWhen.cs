@@ -21,5 +21,5 @@ public enum LoadWhen
     /// <summary>
     ///     Load as soon as the field/property is registered by the API.
     /// </summary>
-    Immediately = 2
+    OnRegister = 2
 }

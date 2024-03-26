@@ -88,6 +88,8 @@ public static class ModDataHandler
         ModDataValues[modDataKey].BaseKey ??= ModDataHelper.GenerateBaseKey(type, guid);
         LethalModDataLib.Logger?.LogDebug(
             $"Added field or property with name {modDataKey.Name} from {type.AssemblyQualifiedName} to the mod data system!");
+
+        if (ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnRegister)) HandleLoadModData(modDataKey);
     }
 
     #region Initialisation

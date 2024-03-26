@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.1.0] - 23/03/2024
+
+### Added
+
+- Implemented `OnRegister` LoadWhen enum value and behaviour to handle it.
+
 ## [1.0.1] - 23/03/2024
 
 ### Fixed
