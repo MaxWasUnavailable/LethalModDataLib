@@ -14,7 +14,7 @@ public enum ResetWhen
     Manual = 0,
 
     /// <summary>
-    ///     Reset when we load or create a new save (before loading mod data).
+    ///     Reset the field/property when a game over happens (quota not reached).
     /// </summary>
-    OnLoad = 1
+    OnGameOver = 1
 }
