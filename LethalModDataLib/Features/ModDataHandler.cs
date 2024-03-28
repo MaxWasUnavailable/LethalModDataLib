@@ -205,6 +205,9 @@ public static class ModDataHandler
         DeleteModDataFile(filePath);
     }
 
+    /// <summary>
+    ///     Resets all mod data attributed objects that have their ResetWhen set to OnGameOver.
+    /// </summary>
     private static void OnGameOver()
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
