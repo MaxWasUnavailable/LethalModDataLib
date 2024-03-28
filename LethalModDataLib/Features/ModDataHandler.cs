@@ -110,6 +110,7 @@ public static class ModDataHandler
         SaveLoadEvents.PostAutoSaveEvent += OnAutoSave;
         SaveLoadEvents.PostLoadGameEvent += OnLoad;
         SaveLoadEvents.PostDeleteSaveEvent += OnDeleteSave;
+        SaveLoadEvents.PostResetSavedGameValuesEvent += OnGameOver;
 
         LethalModDataLib.Logger?.LogInfo("ModDataHandler initialised!");
     }
@@ -158,6 +159,13 @@ public static class ModDataHandler
         }
     }
 
+    private static void ResetModData(this IModDataKey modDataKey)
+    {
+        if (!modDataKey.TrySetValue(ModDataValues[modDataKey].OriginalValue))
+            LethalModDataLib.Logger?.LogWarning(
+                $"Failed to reset field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}!");
+    }
+
     /// <summary>
     ///     Saves all mod data attributed objects that have their SaveWhen set to OnSave.
     /// </summary>
@@ -195,6 +203,13 @@ public static class ModDataHandler
     private static void OnDeleteSave(string filePath)
     {
         DeleteModDataFile(filePath);
+    }
+
+    private static void OnGameOver()
+    {
+        foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
+                     ModDataValues[modDataKey].ResetWhen.HasFlag(ResetWhen.OnGameOver)))
+            modDataKey.ResetModData();
     }
 
     #endregion
