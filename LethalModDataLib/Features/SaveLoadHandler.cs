@@ -110,7 +110,7 @@ public static class SaveLoadHandler
         if (!ModDataHandler.ModDataValues.TryGetValue(modDataKey, out var modDataValue))
         {
             LethalModDataLib.Logger?.LogWarning(
-                $"Field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute! " +
+                $"Field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute! " +
                 $"If this is an instance of a class, make sure to register it using ModDataHandler.RegisterInstance!");
             return false;
         }
@@ -123,11 +123,21 @@ public static class SaveLoadHandler
 
         var value = LoadData(key, saveLocation, autoAddGuid: false, defaultValue: currentValue);
 
+        try
+        {
+            LethalModDataLib.Logger?.LogDebug(
+                $"Loaded value for property or field {modDataKey.Name}: {value}");
+        }
+        catch (Exception e)
+        {
+            // ignored in case the value can't be converted to a string
+        }
+
         if (modDataKey.TrySetValue(value))
             return true;
 
         LethalModDataLib.Logger?.LogDebug(
-            $"Failed to set value for field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}! Does it not have a setter?");
+            $"Failed to set value for field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}! Does it not have a setter?");
         return false;
     }
 
@@ -154,6 +164,16 @@ public static class SaveLoadHandler
         try
         {
             LethalModDataLib.Logger?.LogDebug($"Saving data to file {fileName} with key {key}...");
+
+            try
+            {
+                LethalModDataLib.Logger?.LogDebug($"Data to save: {data}");
+            }
+            catch (Exception e)
+            {
+                // ignored in case the data can't be converted to a string
+            }
+
             ES3.Save(key, data, fileName);
             return true;
         }
@@ -216,7 +236,7 @@ public static class SaveLoadHandler
         if (!ModDataHandler.ModDataValues.TryGetValue(modDataKey, out var modDataValue))
         {
             LethalModDataLib.Logger?.LogWarning(
-                $"Field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute! " +
+                $"Field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName} has no registered mod data attribute! " +
                 $"If this is an instance of a class, make sure to register it using ModDataHandler.RegisterInstance!");
             return false;
         }
@@ -228,7 +248,7 @@ public static class SaveLoadHandler
             return SaveData(value, key, saveLocation, false);
 
         LethalModDataLib.Logger?.LogDebug(
-            $"Failed to get value from field {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}! Does it not have a getter?");
+            $"Failed to get value from field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}! Does it not have a getter?");
         return false;
     }
 
