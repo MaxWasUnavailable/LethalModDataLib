@@ -84,12 +84,15 @@ public static class ModDataHandler
             return;
         }
 
-        ModDataValues.Add(modDataKey, new ModDataValue(modDataKey.GetModDataAttribute(), keySuffix));
+        modDataKey.TryGetValue(out var originalValue);
+
+        ModDataValues.Add(modDataKey, new ModDataValue(modDataKey.GetModDataAttribute(), keySuffix, originalValue));
         ModDataValues[modDataKey].BaseKey ??= ModDataHelper.GenerateBaseKey(type, guid);
         LethalModDataLib.Logger?.LogDebug(
             $"Added field or property with name {modDataKey.Name} from {type.AssemblyQualifiedName} to the mod data system!");
 
-        if (ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnRegister)) HandleLoadModData(modDataKey);
+        if (ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnRegister))
+            HandleLoadModData(modDataKey);
     }
 
     #region Initialisation
