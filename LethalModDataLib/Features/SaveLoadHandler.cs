@@ -4,6 +4,8 @@ using LethalModDataLib.Enums;
 using LethalModDataLib.Helpers;
 using LethalModDataLib.Interfaces;
 
+#pragma warning disable CS0168 // Variable is declared but never used
+
 namespace LethalModDataLib.Features;
 
 /// <summary>
