@@ -36,9 +36,4 @@ public record ModDataValue(ModDataAttribute ModDataAttribute, string? KeySuffix 
     ///     Where to save the field.
     /// </summary>
     public SaveLocation SaveLocation => ModDataAttribute.SaveLocation;
-
-    /// <summary>
-    ///     Original value of the field.
-    /// </summary>
-    public object? OriginalValue { get; set; }
 }
