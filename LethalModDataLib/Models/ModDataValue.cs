@@ -28,6 +28,11 @@ public record ModDataValue(ModDataAttribute ModDataAttribute, string? KeySuffix 
     public LoadWhen LoadWhen => ModDataAttribute.LoadWhen;
 
     /// <summary>
+    ///     When to reset the field.
+    /// </summary>
+    public ResetWhen ResetWhen => ModDataAttribute.ResetWhen;
+
+    /// <summary>
     ///     Where to save the field.
     /// </summary>
     public SaveLocation SaveLocation => ModDataAttribute.SaveLocation;
