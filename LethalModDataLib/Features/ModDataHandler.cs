@@ -123,7 +123,7 @@ public static class ModDataHandler
     ///     Saves the mod data attributed object.
     /// </summary>
     /// <param name="modDataKey"> ModDataKey of the object to save. </param>
-    internal static void HandleSaveModData(IModDataKey modDataKey)
+    internal static void HandleSaveModData(this IModDataKey modDataKey)
     {
         if (!SaveLoadHandler.SaveData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
@@ -134,7 +134,7 @@ public static class ModDataHandler
     ///     Loads the mod data attributed object.
     /// </summary>
     /// <param name="modDataKey"> ModDataKey of the object to load. </param>
-    internal static void HandleLoadModData(IModDataKey modDataKey)
+    internal static void HandleLoadModData(this IModDataKey modDataKey)
     {
         if (!SaveLoadHandler.LoadData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
@@ -173,7 +173,7 @@ public static class ModDataHandler
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
                      ModDataValues[modDataKey].SaveWhen.HasFlag(SaveWhen.OnSave)))
-            HandleSaveModData(modDataKey);
+            modDataKey.HandleSaveModData();
     }
 
     /// <summary>
@@ -183,7 +183,7 @@ public static class ModDataHandler
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
                      ModDataValues[modDataKey].SaveWhen.HasFlag(SaveWhen.OnAutoSave)))
-            HandleSaveModData(modDataKey);
+            modDataKey.HandleSaveModData();
     }
 
     /// <summary>
@@ -193,7 +193,7 @@ public static class ModDataHandler
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
                      ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnLoad)))
-            HandleLoadModData(modDataKey);
+            modDataKey.HandleLoadModData();
     }
 
     /// <summary>
