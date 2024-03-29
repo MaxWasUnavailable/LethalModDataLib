@@ -408,3 +408,8 @@ public class SomeClass
   if you are using the `SaveLocation.CurrentSave` parameter, and are manually handling saving and/or loading. This is
   not a concern if you are using the attribute without manual handling, if you are using the `SaveLocation.GeneralSave`
   parameter, or if you are saving/loading *after* a save file has been loaded.
+
+## Attribution
+
+<a href="https://www.flaticon.com/free-icon/floppy-disk_482459?term=floppy&page=1&position=1&origin=search&related_id=482459" title="save icons">
+Save icons created by Those Icons - Flaticon</a>
