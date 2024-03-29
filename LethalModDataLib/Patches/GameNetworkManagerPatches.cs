@@ -22,4 +22,15 @@ internal static class GameNetworkManagerPatches
     {
         SaveLoadEvents.OnPostSaveGame(StartOfRound.Instance.isChallengeFile, __instance.currentSaveFileName);
     }
+
+    /// <summary>
+    ///     Called after the game resets its saved game values. (This only happens after a game over)
+    /// </summary>
+    /// <param name="__instance"> The <see cref="GameNetworkManager" /> instance. </param>
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(GameNetworkManager.ResetSavedGameValues))]
+    private static void PostResetSavedGameValues(GameNetworkManager __instance)
+    {
+        SaveLoadEvents.OnPostResetSavedGameValues();
+    }
 }

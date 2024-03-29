@@ -120,20 +120,7 @@ public static class SaveLoadHandler
         var key = modDataKey.ToES3KeyString();
         var saveLocation = modDataValue.SaveLocation;
 
-        // If the field or property has a value, we'll use it as default in case no saved moddata is found
-        modDataKey.TryGetValue(out var currentValue);
-
-        var value = LoadData(key, saveLocation, autoAddGuid: false, defaultValue: currentValue);
-
-        try
-        {
-            LethalModDataLib.Logger?.LogDebug(
-                $"Loaded value for property or field {modDataKey.Name}: {value}");
-        }
-        catch (Exception e)
-        {
-            // ignored in case the value can't be converted to a string
-        }
+        var value = LoadData(key, saveLocation, autoAddGuid: false, defaultValue: modDataValue.OriginalValue);
 
         if (modDataKey.TrySetValue(value))
             return true;
@@ -166,15 +153,6 @@ public static class SaveLoadHandler
         try
         {
             LethalModDataLib.Logger?.LogDebug($"Saving data to file {fileName} with key {key}...");
-
-            try
-            {
-                LethalModDataLib.Logger?.LogDebug($"Data to save: {data}");
-            }
-            catch (Exception e)
-            {
-                // ignored in case the data can't be converted to a string
-            }
 
             ES3.Save(key, data, fileName);
             return true;

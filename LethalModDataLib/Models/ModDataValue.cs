@@ -6,7 +6,7 @@ namespace LethalModDataLib.Models;
 /// <summary>
 ///     Record used as value for ModDataFields and ModDataProperties dictionaries.
 /// </summary>
-public record ModDataValue(ModDataAttribute ModDataAttribute, string? KeySuffix = null)
+public record ModDataValue(ModDataAttribute ModDataAttribute, string? KeySuffix = null, object? OriginalValue = null)
 {
     /// <summary>
     ///     Base key for ES3.
@@ -26,6 +26,11 @@ public record ModDataValue(ModDataAttribute ModDataAttribute, string? KeySuffix 
     ///     When to load the field.
     /// </summary>
     public LoadWhen LoadWhen => ModDataAttribute.LoadWhen;
+
+    /// <summary>
+    ///     When to reset the field.
+    /// </summary>
+    public ResetWhen ResetWhen => ModDataAttribute.ResetWhen;
 
     /// <summary>
     ///     Where to save the field.

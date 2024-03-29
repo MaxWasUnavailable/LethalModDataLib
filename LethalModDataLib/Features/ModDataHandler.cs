@@ -84,12 +84,15 @@ public static class ModDataHandler
             return;
         }
 
-        ModDataValues.Add(modDataKey, new ModDataValue(modDataKey.GetModDataAttribute(), keySuffix));
+        modDataKey.TryGetValue(out var originalValue);
+
+        ModDataValues.Add(modDataKey, new ModDataValue(modDataKey.GetModDataAttribute(), keySuffix, originalValue));
         ModDataValues[modDataKey].BaseKey ??= ModDataHelper.GenerateBaseKey(type, guid);
         LethalModDataLib.Logger?.LogDebug(
             $"Added field or property with name {modDataKey.Name} from {type.AssemblyQualifiedName} to the mod data system!");
 
-        if (ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnRegister)) HandleLoadModData(modDataKey);
+        if (ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnRegister))
+            HandleLoadModData(modDataKey);
     }
 
     #region Initialisation
@@ -107,6 +110,7 @@ public static class ModDataHandler
         SaveLoadEvents.PostAutoSaveEvent += OnAutoSave;
         SaveLoadEvents.PostLoadGameEvent += OnLoad;
         SaveLoadEvents.PostDeleteSaveEvent += OnDeleteSave;
+        SaveLoadEvents.PostResetSavedGameValuesEvent += OnGameOver;
 
         LethalModDataLib.Logger?.LogInfo("ModDataHandler initialised!");
     }
@@ -119,7 +123,7 @@ public static class ModDataHandler
     ///     Saves the mod data attributed object.
     /// </summary>
     /// <param name="modDataKey"> ModDataKey of the object to save. </param>
-    internal static void HandleSaveModData(IModDataKey modDataKey)
+    internal static void HandleSaveModData(this IModDataKey modDataKey)
     {
         if (!SaveLoadHandler.SaveData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
@@ -130,7 +134,7 @@ public static class ModDataHandler
     ///     Loads the mod data attributed object.
     /// </summary>
     /// <param name="modDataKey"> ModDataKey of the object to load. </param>
-    internal static void HandleLoadModData(IModDataKey modDataKey)
+    internal static void HandleLoadModData(this IModDataKey modDataKey)
     {
         if (!SaveLoadHandler.LoadData(modDataKey))
             LethalModDataLib.Logger?.LogWarning(
@@ -155,6 +159,13 @@ public static class ModDataHandler
         }
     }
 
+    private static void ResetModData(this IModDataKey modDataKey)
+    {
+        if (!modDataKey.TrySetValue(ModDataValues[modDataKey].OriginalValue))
+            LethalModDataLib.Logger?.LogWarning(
+                $"Failed to reset field or property {modDataKey.Name} from {modDataKey.AssemblyQualifiedName}!");
+    }
+
     /// <summary>
     ///     Saves all mod data attributed objects that have their SaveWhen set to OnSave.
     /// </summary>
@@ -162,7 +173,7 @@ public static class ModDataHandler
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
                      ModDataValues[modDataKey].SaveWhen.HasFlag(SaveWhen.OnSave)))
-            HandleSaveModData(modDataKey);
+            modDataKey.HandleSaveModData();
     }
 
     /// <summary>
@@ -172,7 +183,7 @@ public static class ModDataHandler
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
                      ModDataValues[modDataKey].SaveWhen.HasFlag(SaveWhen.OnAutoSave)))
-            HandleSaveModData(modDataKey);
+            modDataKey.HandleSaveModData();
     }
 
     /// <summary>
@@ -182,7 +193,7 @@ public static class ModDataHandler
     {
         foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
                      ModDataValues[modDataKey].LoadWhen.HasFlag(LoadWhen.OnLoad)))
-            HandleLoadModData(modDataKey);
+            modDataKey.HandleLoadModData();
     }
 
     /// <summary>
@@ -192,6 +203,16 @@ public static class ModDataHandler
     private static void OnDeleteSave(string filePath)
     {
         DeleteModDataFile(filePath);
+    }
+
+    /// <summary>
+    ///     Resets all mod data attributed objects that have their ResetWhen set to OnGameOver.
+    /// </summary>
+    private static void OnGameOver()
+    {
+        foreach (var modDataKey in ModDataValues.Keys.Where(modDataKey =>
+                     ModDataValues[modDataKey].ResetWhen.HasFlag(ResetWhen.OnGameOver)))
+            modDataKey.ResetModData();
     }
 
     #endregion

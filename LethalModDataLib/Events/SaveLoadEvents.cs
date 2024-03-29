@@ -22,6 +22,11 @@ public static class SaveLoadEvents
     public delegate void PostLoadGameEventHandler(bool isChallenge, string saveFileName);
 
     /// <summary>
+    ///     Called after the game resets its saved game values. (This only happens after a game over)
+    /// </summary>
+    public delegate void PostResetSavedGameValuesEventHandler();
+
+    /// <summary>
     ///     Called after the game has been saved.
     /// </summary>
     public delegate void PostSaveGameEventHandler(bool isChallenge, string saveFileName);
@@ -78,5 +83,18 @@ public static class SaveLoadEvents
     internal static void OnPostDeleteSave(string saveFileName)
     {
         PostDeleteSaveEvent?.Invoke(saveFileName);
+    }
+
+    /// <summary>
+    ///     Called after the game resets its saved game values. (This only happens after a game over)
+    /// </summary>
+    public static event PostResetSavedGameValuesEventHandler? PostResetSavedGameValuesEvent;
+
+    /// <summary>
+    ///     Called after the game resets its saved game values. (This only happens after a game over)
+    /// </summary>
+    internal static void OnPostResetSavedGameValues()
+    {
+        PostResetSavedGameValuesEvent?.Invoke();
     }
 }
