@@ -64,6 +64,11 @@ the ModDataHandler, and the data will be saved and loaded depending on the attri
 **non-static** fields or properties, the attribute will be ignored unless you register the class' instance with the
 ModDataHandler through the `RegisterInstance` method.
 
+The ModData handler will save the **original** value of your field or property, and use this when no mod data exists
+when loading a save file. This ensures you don't need to manually reset a value whenever a player would switch saves,
+or when a new save is created. If you wish to reset a value when a game over happens, you can use the `ResetWhen`
+parameter.
+
 This is the attribute's constructor signature:
 
 ```csharp
@@ -73,16 +78,19 @@ public ModDataAttribute(SaveWhen saveWhen, LoadWhen loadWhen, SaveLocation saveL
 These are options for its 4 parameters:
 
 - `SaveWhen` (enum) - When the data should be saved
-    - `OnSave` - When the game is saved (Most frequent - also called by autosaves)
-    - `OnAutoSave` - When the game is autosaved (= Whenever the ship returns to orbit)
     - `Manual` - Manually handled by you, the modder
+    - `OnAutoSave` - When the game is autosaved (= Whenever the ship returns to orbit)
+    - `OnSave` - When the game is saved (Most frequent - also called by autosaves)
 - `LoadWhen` (enum) - When the data should be loaded
+    - `Manual` - Manually handled by you, the modder
     - `OnLoad` - When a save file is loaded, right after all vanilla loading is done
     - `OnRegister` - When the attribute is registered, as soon as possible
-    - `Manual` - Manually handled by you, the modder
 - `SaveLocation` (enum) - Where the data should be saved
     - `GeneralSave` - In a .moddata file that fulfills the same purpose as vanilla's LCGeneralSaveData file
     - `CurrentSave` - In a .moddata file that is specific to the current save file
+- `ResetWhen` (enum) - When the data should be reset
+    - `Manual` - Manually handled by you, the modder
+    - `OnGameOver` - When a game over happens (quota not reached, ship reset)
 - `BaseKey` - **Strongly recommended to leave default unless you know what you're doing** - The base key for the data.
   This is used to create the key for the field in the .moddata file. If not set, the library will sort this out. In
   general, you should not need to set this unless you are e.g. trying to access the data from another mod which is not

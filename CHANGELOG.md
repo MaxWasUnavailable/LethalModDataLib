@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.2.0] - 29/03/2024
+
+### Added
+
+- `ResetWhen` enum and behaviour to handle it
+- Storing of original value of fields & properties tagged with `ModDataAttribute`, used for resetting
+
+### Changed
+
+- If a field or property that is tracked by the ModData system is not found in a save while loading, instead of keeping
+  the current value, it will now be reset to the original value
+
 ## [1.1.0] - 23/03/2024
 
 ### Added
