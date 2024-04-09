@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
 using LethalModDataLib.Attributes;
+using LethalModDataLib.Helpers;
 using LethalModDataLib.Models;
 
 namespace LethalModDataLib.Features;
@@ -19,7 +20,7 @@ public static class ModDataAttributeCollector
     internal static void RegisterModDataAttributes()
     {
         foreach (var pluginInfo in Chainloader.PluginInfos.Values)
-        foreach (var type in pluginInfo.Instance!.GetType().Assembly.GetTypes())
+        foreach (var type in pluginInfo.Instance!.GetType().Assembly.GetLoadableTypes())
             RegisterModDataAttributes(pluginInfo.Metadata.GUID, type);
     }
 
