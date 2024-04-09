@@ -224,7 +224,7 @@ public abstract class ModDataContainer
                 }
             }
 
-            var value = SaveLoadHandler.LoadData<object>(prefix + field.Name, saveLocation: SaveLocation,
+            var value = SaveLoadHandler.LoadData<object>(prefix + field.Name, SaveLocation,
                 autoAddGuid: false);
 
             field.SetValue(this, value);
@@ -271,8 +271,8 @@ public abstract class ModDataContainer
                 }
             }
 
-            var value = SaveLoadHandler.LoadData<object>(prefix + property.Name, saveLocation: SaveLocation,
-                autoAddGuid: false);
+            var value = SaveLoadHandler.LoadData(prefix + property.Name, SaveLocation,
+                autoAddGuid: false, defaultValue: property.GetValue(this));
 
             property.SetValue(this, value);
         }
