@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.2.1] - 09/04/2024
+
+### Fixed
+
+- Fixed unsafe Attribute finding
+
+### Changed
+
+- If no saved value exists, use the current value when loading ModDataContainer fields/properties
+
 ## [1.2.0] - 29/03/2024
 
 ### Added
