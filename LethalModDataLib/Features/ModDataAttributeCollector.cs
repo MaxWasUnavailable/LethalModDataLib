@@ -44,8 +44,16 @@ public static class ModDataAttributeCollector
     internal static void RegisterModDataAttributes(string guid, Type type, object? instance = null,
         string? keySuffix = null)
     {
-        AddModDataFields(guid, type, instance, keySuffix);
-        AddModDataProperties(guid, type, instance, keySuffix);
+        try
+        {
+            AddModDataFields(guid, type, instance, keySuffix);
+            AddModDataProperties(guid, type, instance, keySuffix);
+        }
+        catch (Exception e)
+        {
+            LethalModDataLib.Logger?.LogError(
+                $"Failed to register ModData attributes in {type.FullName} from {guid} plugin: {e.Message}");
+        }
     }
 
     /// <summary>

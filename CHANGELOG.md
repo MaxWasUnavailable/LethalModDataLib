@@ -13,7 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
 ### Removed
+
+## [1.2.2] - 16/04/2024
+
+### Changed
+
+- Wrapped RegisterModDataAttributes in a try-catch block
 
 ## [1.2.1] - 09/04/2024
 
