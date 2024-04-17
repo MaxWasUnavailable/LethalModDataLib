@@ -22,6 +22,8 @@ public static class ModDataAttributeCollector
         foreach (var pluginInfo in Chainloader.PluginInfos.Values)
         foreach (var type in pluginInfo.Instance!.GetType().Assembly.GetLoadableTypes())
             RegisterModDataAttributes(pluginInfo.Metadata.GUID, type);
+
+        LethalModDataLib.Logger?.LogDebug("ModData attribute registration finished.");
     }
 
     /// <summary>
@@ -32,6 +34,8 @@ public static class ModDataAttributeCollector
         foreach (var type in Chainloader.PluginInfos.Values.SelectMany(pluginInfo =>
                      pluginInfo.Instance!.GetType().Assembly.GetTypes()))
             DeRegisterModDataAttributes(type);
+
+        LethalModDataLib.Logger?.LogDebug("ModData attribute de-registration finished.");
     }
 
     /// <summary>
