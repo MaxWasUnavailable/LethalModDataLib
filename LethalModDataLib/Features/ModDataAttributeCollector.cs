@@ -32,7 +32,7 @@ public static class ModDataAttributeCollector
     internal static void DeRegisterModDataAttributes()
     {
         foreach (var type in Chainloader.PluginInfos.Values.SelectMany(pluginInfo =>
-                     pluginInfo.Instance!.GetType().Assembly.GetTypes()))
+                     pluginInfo.Instance!.GetType().Assembly.GetLoadableTypes()))
             DeRegisterModDataAttributes(type);
 
         LethalModDataLib.Logger?.LogDebug("ModData attribute de-registration finished.");
