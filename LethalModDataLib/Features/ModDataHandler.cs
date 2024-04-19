@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using LethalModDataLib.Enums;
@@ -103,7 +104,14 @@ public static class ModDataHandler
     internal static void Initialise()
     {
         LethalModDataLib.Logger?.LogInfo("Registering ModDataAttribute fields...");
+
+        var timer = new Stopwatch();
+        timer.Start();
+
         ModDataAttributeCollector.RegisterModDataAttributes();
+
+        timer.Stop();
+        LethalModDataLib.Logger?.LogInfo($"ModDataAttribute registration took {timer.ElapsedMilliseconds}ms.");
 
         LethalModDataLib.Logger?.LogInfo("Hooking up save, load and delete events...");
         SaveLoadEvents.PostSaveGameEvent += OnSave;
